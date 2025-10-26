@@ -1,6 +1,6 @@
 === WooCommerce Products Importer ===
 Contributors: yourname
-Tags: woocommerce, products, import, e-commerce
+Tags: woocommerce, products, import, e-commerce, images
 Requires at least: 5.8
 Tested up to: 6.4
 Requires PHP: 7.4
@@ -8,18 +8,20 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-A simple plugin to import 40 products (20 Physical and 20 Variable) into WooCommerce.
+Import 40 products with automatic images into WooCommerce - perfect for testing and demos!
 
 == Description ==
 
 
-WooCommerce Products Importer is a powerful plugin that allows you to quickly populate your WooCommerce store with sample products for testing or demonstration purposes.
+WooCommerce Products Importer is a powerful plugin that allows you to quickly populate your WooCommerce store with sample products including beautiful images for testing or demonstration purposes.
 
 = Features =
 
 * Import 40 high-quality products with one click
-* 20 Physical Products - Tangible items with shipping details
-* 20 Variable Products - Products with color and size variations
+* **Automatic product images** (120+ images total!)
+* 20 Physical Products - Tangible items with shipping details and images
+* 20 Variable Products - Products with color and size variations and image galleries
+* **Image galleries** for each product
 * Automatic categorization
 * Random pricing and stock quantities
 * Easy deletion of all imported products
