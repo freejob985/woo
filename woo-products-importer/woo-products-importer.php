@@ -93,9 +93,13 @@ function wpi_admin_page() {
             <h2><?php _e('Import Products', 'woo-products-importer'); ?></h2>
             <p><?php _e('This plugin will import 40 products into your WooCommerce store:', 'woo-products-importer'); ?></p>
             <ul style="list-style: disc; margin-left: 20px;">
-                <li><?php _e('20 Physical Products - Tangible items that get delivered to customers', 'woo-products-importer'); ?></li>
-                <li><?php _e('20 Variable Products - Products with variations like color or size', 'woo-products-importer'); ?></li>
+                <li><?php _e('20 Physical Products - Tangible items with product images', 'woo-products-importer'); ?></li>
+                <li><?php _e('20 Variable Products - Products with variations and image galleries', 'woo-products-importer'); ?></li>
             </ul>
+            <p style="padding: 10px; background: #e7f7ff; border-left: 4px solid #0073aa; margin: 15px 0;">
+                <strong>📷 <?php _e('Product Images:', 'woo-products-importer'); ?></strong><br>
+                <?php _e('All products will include high-quality images automatically downloaded from external sources.', 'woo-products-importer'); ?>
+            </p>
             
             <form method="post" style="margin-top: 20px;">
                 <?php wp_nonce_field('wpi_import_products_action', 'wpi_import_products_nonce'); ?>
@@ -161,6 +165,41 @@ function wpi_import_products() {
     }
 }
 
+// Helper function to upload image from URL
+function wpi_upload_image_from_url($image_url, $product_id, $product_name) {
+    // Include required WordPress files
+    require_once(ABSPATH . 'wp-admin/includes/media.php');
+    require_once(ABSPATH . 'wp-admin/includes/file.php');
+    require_once(ABSPATH . 'wp-admin/includes/image.php');
+    
+    // Download the image
+    $temp_file = download_url($image_url);
+    
+    if (is_wp_error($temp_file)) {
+        return false;
+    }
+    
+    // Prepare file array
+    $file_array = array(
+        'name' => sanitize_file_name($product_name . '-' . $product_id . '.jpg'),
+        'tmp_name' => $temp_file
+    );
+    
+    // Upload the file
+    $attachment_id = media_handle_sideload($file_array, $product_id);
+    
+    // Clean up temp file
+    if (file_exists($temp_file)) {
+        @unlink($temp_file);
+    }
+    
+    if (is_wp_error($attachment_id)) {
+        return false;
+    }
+    
+    return $attachment_id;
+}
+
 // Create a physical product
 function wpi_create_physical_product($index) {
     $product = new WC_Product_Simple();
@@ -198,6 +237,29 @@ function wpi_create_physical_product($index) {
     
     // Save product
     $product_id = $product->save();
+    
+    // Add product image from URL
+    $image_categories = array('tech', 'fashion', 'food', 'nature', 'business');
+    $random_category = $image_categories[array_rand($image_categories)];
+    $random_id = rand(100, 999);
+    
+    // Using Lorem Picsum for random product images
+    $image_url = "https://picsum.photos/seed/physical{$index}/800/800";
+    
+    $attachment_id = wpi_upload_image_from_url($image_url, $product_id, "physical-product-{$index}");
+    
+    if ($attachment_id) {
+        // Set as product featured image
+        set_post_thumbnail($product_id, $attachment_id);
+        
+        // Add to product gallery (optional)
+        $gallery_image_url = "https://picsum.photos/seed/physical{$index}a/800/800";
+        $gallery_attachment_id = wpi_upload_image_from_url($gallery_image_url, $product_id, "physical-product-{$index}-gallery");
+        
+        if ($gallery_attachment_id) {
+            update_post_meta($product_id, '_product_image_gallery', $gallery_attachment_id);
+        }
+    }
     
     // Add to category
     wp_set_object_terms($product_id, 'Physical Products', 'product_cat', true);
@@ -279,6 +341,29 @@ function wpi_create_variable_product($index) {
             // Save variation
             $variation->save();
             $variation_count++;
+        }
+    }
+    
+    // Add product image from URL
+    $image_url = "https://picsum.photos/seed/variable{$index}/800/800";
+    $attachment_id = wpi_upload_image_from_url($image_url, $product_id, "variable-product-{$index}");
+    
+    if ($attachment_id) {
+        // Set as product featured image
+        set_post_thumbnail($product_id, $attachment_id);
+        
+        // Add gallery images
+        $gallery_ids = array();
+        for ($g = 1; $g <= 3; $g++) {
+            $gallery_url = "https://picsum.photos/seed/variable{$index}g{$g}/800/800";
+            $gallery_id = wpi_upload_image_from_url($gallery_url, $product_id, "variable-product-{$index}-gallery-{$g}");
+            if ($gallery_id) {
+                $gallery_ids[] = $gallery_id;
+            }
+        }
+        
+        if (!empty($gallery_ids)) {
+            update_post_meta($product_id, '_product_image_gallery', implode(',', $gallery_ids));
         }
     }
     

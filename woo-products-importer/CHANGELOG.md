@@ -8,6 +8,9 @@ All notable changes to WooCommerce Products Importer will be documented in this 
 - Initial release of WooCommerce Products Importer
 - Import 20 Physical Products functionality
 - Import 20 Variable Products functionality
+- **🎨 Automatic product images from external URLs**
+- **📷 Featured images for all products**
+- **🖼️ Image galleries (2 images for physical, 4 for variable)**
 - Physical products with shipping details (weight, dimensions)
 - Variable products with Color and Size attributes
 - 8 variations per variable product (different colors and sizes)
@@ -22,6 +25,8 @@ All notable changes to WooCommerce Products Importer will be documented in this 
 - Security nonces for all forms
 - WooCommerce compatibility check
 - Plugin activation validation
+- Image download and upload functionality
+- Integration with Lorem Picsum for high-quality images
 
 ### Features
 - **Physical Products**: 

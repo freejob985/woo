@@ -21,8 +21,10 @@ This plugin adds 40 products to your store:
 ## ✨ المميزات | Features
 
 - ✅ إضافة 40 منتج بضغطة زر واحدة
+- ✅ **صور تلقائية** لجميع المنتجات (120+ صورة!)
 - ✅ منتجات فيزيائية مع تفاصيل الشحن والوزن
 - ✅ منتجات متغيرة بألوان وأحجام مختلفة
+- ✅ **معرض صور** لكل منتج
 - ✅ أسعار ومخزون عشوائي واقعي
 - ✅ تصنيف تلقائي للمنتجات
 - ✅ إمكانية حذف جميع المنتجات المستوردة
@@ -32,8 +34,10 @@ This plugin adds 40 products to your store:
 ---
 
 - ✅ Import 40 products with one click
+- ✅ **Automatic images** for all products (120+ images!)
 - ✅ Physical products with shipping details and weight
 - ✅ Variable products with different colors and sizes
+- ✅ **Image gallery** for each product
 - ✅ Realistic random pricing and stock
 - ✅ Automatic product categorization
 - ✅ Easy deletion of all imported products
@@ -109,6 +113,7 @@ This plugin adds 40 products to your store:
 ### المنتجات الفيزيائية | Physical Products
 
 - الاسم: Physical Product #1 إلى #20
+- **صورة رئيسية + صورة في المعرض** 📷
 - الوصف الكامل والمختصر
 - السعر: عشوائي بين $10 - $200
 - المخزون: 50 - 200 قطعة
@@ -119,6 +124,7 @@ This plugin adds 40 products to your store:
 ---
 
 - Name: Physical Product #1 to #20
+- **Featured image + gallery image** 📷
 - Full and short descriptions
 - Price: Random between $10 - $200
 - Stock: 50 - 200 units
@@ -129,6 +135,7 @@ This plugin adds 40 products to your store:
 ### المنتجات المتغيرة | Variable Products
 
 - الاسم: Variable Product #1 إلى #20
+- **صورة رئيسية + 3 صور في المعرض** 🖼️
 - الوصف الكامل والمختصر
 - الألوان: أحمر، أزرق، أخضر، أسود، أبيض
 - الأحجام: S, M, L, XL
@@ -141,6 +148,7 @@ This plugin adds 40 products to your store:
 ---
 
 - Name: Variable Product #1 to #20
+- **Featured image + 3 gallery images** 🖼️
 - Full and short descriptions
 - Colors: Red, Blue, Green, Black, White
 - Sizes: S, M, L, XL
