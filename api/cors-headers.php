@@ -39,6 +39,7 @@ function send_cors_headers() {
     $allowed_origins = array(
         // Production Domains - نطاقات الإنتاج
         'https://woo-silk.vercel.app',
+        'https://woo-4pdx.vercel.app',  // النطاق الجديد
         'https://dev.murjan.sa',
         'https://murjan.sa',
         'https://www.murjan.sa',
