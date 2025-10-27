@@ -20,6 +20,9 @@ if (!defined('ABSPATH')) {
  * ✅ إرسال CORS Headers بشكل فوري
  */
 function murjan_send_cors_headers() {
+    // Get request origin
+    $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+    
     // 🌐 النطاقات المسموح لها
     $allowed_origins = [
         // Production
@@ -37,15 +40,28 @@ function murjan_send_cors_headers() {
         'http://127.0.0.1:5173',
     ];
     
-    // Get request origin
-    $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+    // ✅ Check if origin is in allowed list
+    $is_allowed = in_array($origin, $allowed_origins);
     
-    // ✅ Send headers for allowed origins
-    if (in_array($origin, $allowed_origins)) {
+    // ✅ Check if origin is a Vercel preview deployment
+    // Pattern: https://woo-4pdx-*.vercel.app or https://*-mgs-projects-*.vercel.app
+    $is_vercel_preview = !empty($origin) && (
+        preg_match('/^https:\/\/woo-4pdx-[a-z0-9]+-[a-z0-9-]+\.vercel\.app$/i', $origin) ||
+        preg_match('/^https:\/\/[a-z0-9]+-[a-z0-9-]+\.vercel\.app$/i', $origin)
+    );
+    
+    // ✅ Check if origin is localhost
+    $is_localhost = !empty($origin) && (
+        strpos($origin, 'http://localhost') === 0 ||
+        strpos($origin, 'http://127.0.0.1') === 0
+    );
+    
+    // ✅ Send headers for allowed origins, Vercel previews, or localhost
+    if ($is_allowed || $is_vercel_preview || $is_localhost) {
         header("Access-Control-Allow-Origin: {$origin}");
         header("Access-Control-Allow-Credentials: true");
     } elseif (!empty($origin)) {
-        // Allow any origin in development
+        // Allow any origin as fallback (can be restricted in production)
         header("Access-Control-Allow-Origin: {$origin}");
         header("Access-Control-Allow-Credentials: true");
     } else {
