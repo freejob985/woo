@@ -1,0 +1,888 @@
+{
+	"info": {
+		"_postman_id": "complete-api-2024",
+		"name": "📚 WooCommerce Products API - Complete Documentation",
+		"description": "# 🚀 WooCommerce Products API - التوثيق الكامل\n\n## الميزات:\n✅ جميع المنتجات (All Products API)\n✅ المنتجات الفيزيائية (Physical Products API)\n✅ المنتجات المتغيرة (Variable Products API)\n✅ أمثلة كاملة مع Responses\n✅ دعم كامل للصور والحقول\n\n## الرابط الأساسي:\n`https://dev.murjan.sa/wp-json/murjan-api/v1`\n\n## المصادقة:\n- **Consumer Key:** ck_2210fb8d333da5da151029715a85618a4b283a52\n- **Consumer Secret:** cs_7f1073e18d0af70d01c84692ce8c04609a722b5c",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "murjan-api-2024"
+	},
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "username",
+				"value": "ck_2210fb8d333da5da151029715a85618a4b283a52",
+				"type": "string"
+			},
+			{
+				"key": "password",
+				"value": "cs_7f1073e18d0af70d01c84692ce8c04609a722b5c",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://dev.murjan.sa/wp-json/murjan-api/v1",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "🟣 All Products API",
+			"item": [
+				{
+					"name": "📋 عرض جميع المنتجات",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products?page=1&per_page=10",
+							"host": ["{{base_url}}"],
+							"path": ["products"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "رقم الصفحة"
+								},
+								{
+									"key": "per_page",
+									"value": "10",
+									"description": "عدد المنتجات في الصفحة"
+								}
+							]
+						},
+						"description": "عرض جميع المنتجات (فيزيائية + متغيرة) مع pagination"
+					},
+					"response": []
+				},
+				{
+					"name": "🔍 البحث في جميع المنتجات",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/search?s=قميص&page=1&per_page=10",
+							"host": ["{{base_url}}"],
+							"path": ["products", "search"],
+							"query": [
+								{
+									"key": "s",
+									"value": "قميص",
+									"description": "كلمة البحث (مطلوبة)"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "10"
+								}
+							]
+						},
+						"description": "البحث في جميع المنتجات مع pagination"
+					},
+					"response": []
+				},
+				{
+					"name": "👁️ عرض منتج واحد",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/123",
+							"host": ["{{base_url}}"],
+							"path": ["products", "123"]
+						},
+						"description": "عرض تفاصيل منتج واحد (أي نوع). استبدل 123 برقم المنتج الفعلي"
+					},
+					"response": []
+				},
+				{
+					"name": "📊 إحصائيات شاملة",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/stats",
+							"host": ["{{base_url}}"],
+							"path": ["products", "stats"]
+						},
+						"description": "إحصائيات شاملة لجميع المنتجات:\n- عدد المنتجات\n- حالة المخزون\n- المبيعات\n- الأسعار"
+					},
+					"response": []
+				},
+				{
+					"name": "⭐ المنتجات المميزة",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products?featured=true&page=1&per_page=20",
+							"host": ["{{base_url}}"],
+							"path": ["products"],
+							"query": [
+								{
+									"key": "featured",
+									"value": "true"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "20"
+								}
+							]
+						},
+						"description": "عرض المنتجات المميزة فقط"
+					},
+					"response": []
+				},
+				{
+					"name": "💰 المنتجات المخفضة",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products?on_sale=true&orderby=price&order=ASC&page=1",
+							"host": ["{{base_url}}"],
+							"path": ["products"],
+							"query": [
+								{
+									"key": "on_sale",
+									"value": "true"
+								},
+								{
+									"key": "orderby",
+									"value": "price"
+								},
+								{
+									"key": "order",
+									"value": "ASC"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						},
+						"description": "المنتجات المخفضة مرتبة بالسعر الأقل"
+					},
+					"response": []
+				},
+				{
+					"name": "🔵 المنتجات الفيزيائية فقط",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products?type=physical&page=1&per_page=10",
+							"host": ["{{base_url}}"],
+							"path": ["products"],
+							"query": [
+								{
+									"key": "type",
+									"value": "physical"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "10"
+								}
+							]
+						},
+						"description": "فلترة المنتجات الفيزيائية فقط"
+					},
+					"response": []
+				},
+				{
+					"name": "🟢 المنتجات المتغيرة فقط",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products?type=variable&page=1&per_page=10",
+							"host": ["{{base_url}}"],
+							"path": ["products"],
+							"query": [
+								{
+									"key": "type",
+									"value": "variable"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "10"
+								}
+							]
+						},
+						"description": "فلترة المنتجات المتغيرة فقط"
+					},
+					"response": []
+				},
+				{
+					"name": "📂 حسب التصنيف",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products?category=clothing&page=1",
+							"host": ["{{base_url}}"],
+							"path": ["products"],
+							"query": [
+								{
+									"key": "category",
+									"value": "clothing",
+									"description": "slug التصنيف"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						},
+						"description": "فلترة المنتجات حسب التصنيف"
+					},
+					"response": []
+				}
+			],
+			"description": "API موحد لعرض جميع المنتجات مع دعم كامل للفلترة والبحث"
+		},
+		{
+			"name": "🔵 Physical Products API",
+			"item": [
+				{
+					"name": "➕ إضافة منتج فيزيائي",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "قميص قطني رجالي جديد",
+									"description": "اسم المنتج (مطلوب)",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "قميص قطني عالي الجودة مصنوع من القطن الخالص 100%",
+									"description": "الوصف الكامل",
+									"type": "text"
+								},
+								{
+									"key": "short_description",
+									"value": "قميص قطني مريح للاستخدام اليومي",
+									"description": "الوصف المختصر",
+									"type": "text"
+								},
+								{
+									"key": "sku",
+									"value": "SHIRT-NEW-001",
+									"description": "رقم تعريفي فريد",
+									"type": "text"
+								},
+								{
+									"key": "regular_price",
+									"value": "200.00",
+									"description": "السعر العادي (مطلوب)",
+									"type": "text"
+								},
+								{
+									"key": "sale_price",
+									"value": "150.00",
+									"description": "سعر التخفيض",
+									"type": "text"
+								},
+								{
+									"key": "manage_stock",
+									"value": "true",
+									"description": "إدارة المخزون",
+									"type": "text"
+								},
+								{
+									"key": "stock_quantity",
+									"value": "50",
+									"description": "كمية المخزون",
+									"type": "text"
+								},
+								{
+									"key": "stock_status",
+									"value": "instock",
+									"description": "حالة المخزون: instock, outofstock, onbackorder",
+									"type": "text"
+								},
+								{
+									"key": "weight",
+									"value": "0.3",
+									"description": "الوزن (كيلوجرام)",
+									"type": "text"
+								},
+								{
+									"key": "length",
+									"value": "30",
+									"description": "الطول (سنتيمتر)",
+									"type": "text"
+								},
+								{
+									"key": "width",
+									"value": "20",
+									"description": "العرض (سنتيمتر)",
+									"type": "text"
+								},
+								{
+									"key": "height",
+									"value": "2",
+									"description": "الارتفاع (سنتيمتر)",
+									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "publish",
+									"description": "حالة المنتج: publish, draft, pending",
+									"type": "text"
+								},
+								{
+									"key": "featured",
+									"value": "true",
+									"description": "منتج مميز",
+									"type": "text"
+								},
+								{
+									"key": "categories",
+									"value": "clothing,mens-clothing",
+									"description": "التصنيفات (مفصولة بفاصلة)",
+									"type": "text"
+								},
+								{
+									"key": "tags",
+									"value": "shirt,cotton,casual",
+									"description": "الوسوم (مفصولة بفاصلة)",
+									"type": "text"
+								},
+								{
+									"key": "main_image",
+									"description": "الصورة الرئيسية (ملف)",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "gallery_images[]",
+									"description": "صور المعرض (ملفات متعددة)",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/physical-products",
+							"host": ["{{base_url}}"],
+							"path": ["physical-products"]
+						},
+						"description": "إضافة منتج فيزيائي جديد مع دعم رفع الصور"
+					},
+					"response": []
+				},
+				{
+					"name": "✏️ تعديل منتج فيزيائي",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "قميص قطني رجالي - محدث",
+									"type": "text"
+								},
+								{
+									"key": "regular_price",
+									"value": "250.00",
+									"type": "text"
+								},
+								{
+									"key": "sale_price",
+									"value": "180.00",
+									"type": "text"
+								},
+								{
+									"key": "stock_quantity",
+									"value": "75",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/physical-products/789",
+							"host": ["{{base_url}}"],
+							"path": ["physical-products", "789"]
+						},
+						"description": "تعديل منتج فيزيائي موجود. استبدل 789 برقم المنتج"
+					},
+					"response": []
+				},
+				{
+					"name": "📋 عرض جميع المنتجات الفيزيائية",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/physical-products?page=1&per_page=10&orderby=date&order=DESC",
+							"host": ["{{base_url}}"],
+							"path": ["physical-products"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "10"
+								},
+								{
+									"key": "orderby",
+									"value": "date"
+								},
+								{
+									"key": "order",
+									"value": "DESC"
+								}
+							]
+						},
+						"description": "عرض جميع المنتجات الفيزيائية مع pagination"
+					},
+					"response": []
+				},
+				{
+					"name": "👁️ عرض منتج فيزيائي واحد",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/physical-products/789",
+							"host": ["{{base_url}}"],
+							"path": ["physical-products", "789"]
+						},
+						"description": "عرض تفاصيل منتج فيزيائي واحد"
+					},
+					"response": []
+				},
+				{
+					"name": "🔍 البحث في المنتجات الفيزيائية",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/physical-products/search?s=قميص&page=1&per_page=10",
+							"host": ["{{base_url}}"],
+							"path": ["physical-products", "search"],
+							"query": [
+								{
+									"key": "s",
+									"value": "قميص"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "10"
+								}
+							]
+						},
+						"description": "البحث في المنتجات الفيزيائية"
+					},
+					"response": []
+				},
+				{
+					"name": "🗑️ حذف منتج فيزيائي",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/physical-products/789",
+							"host": ["{{base_url}}"],
+							"path": ["physical-products", "789"]
+						},
+						"description": "حذف منتج فيزيائي نهائياً"
+					},
+					"response": []
+				},
+				{
+					"name": "📊 إحصائيات المنتجات الفيزيائية",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/physical-products/stats",
+							"host": ["{{base_url}}"],
+							"path": ["physical-products", "stats"]
+						},
+						"description": "إحصائيات شاملة للمنتجات الفيزيائية"
+					},
+					"response": []
+				}
+			],
+			"description": "API لإدارة المنتجات الفيزيائية (التي تحتاج شحن)"
+		},
+		{
+			"name": "🟢 Variable Products API",
+			"item": [
+				{
+					"name": "➕ إضافة منتج متغير",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "بنطلون جينز - مقاسات وألوان متعددة",
+									"description": "اسم المنتج (مطلوب)",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "بنطلون جينز عصري متوفر بمقاسات وألوان مختلفة",
+									"description": "الوصف الكامل",
+									"type": "text"
+								},
+								{
+									"key": "short_description",
+									"value": "جينز عصري ومريح",
+									"description": "الوصف المختصر",
+									"type": "text"
+								},
+								{
+									"key": "sku",
+									"value": "JEANS-VAR-001",
+									"description": "رقم تعريفي",
+									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "publish",
+									"description": "حالة المنتج",
+									"type": "text"
+								},
+								{
+									"key": "featured",
+									"value": "true",
+									"description": "منتج مميز",
+									"type": "text"
+								},
+								{
+									"key": "attributes",
+									"value": "[{\"name\":\"المقاس\",\"options\":[\"S\",\"M\",\"L\",\"XL\"]},{\"name\":\"اللون\",\"options\":[\"أزرق\",\"أسود\",\"أبيض\"]}]",
+									"description": "المواصفات (JSON)",
+									"type": "text"
+								},
+								{
+									"key": "variations",
+									"value": "[{\"attributes\":{\"المقاس\":\"S\",\"اللون\":\"أزرق\"},\"sku\":\"JEANS-S-BLUE\",\"regular_price\":\"180.00\",\"sale_price\":\"150.00\",\"stock_quantity\":15,\"stock_status\":\"instock\"},{\"attributes\":{\"المقاس\":\"M\",\"اللون\":\"أزرق\"},\"sku\":\"JEANS-M-BLUE\",\"regular_price\":\"180.00\",\"stock_quantity\":20,\"stock_status\":\"instock\"},{\"attributes\":{\"المقاس\":\"S\",\"اللون\":\"أسود\"},\"sku\":\"JEANS-S-BLACK\",\"regular_price\":\"180.00\",\"stock_quantity\":10,\"stock_status\":\"instock\"}]",
+									"description": "الاختلافات (JSON)",
+									"type": "text"
+								},
+								{
+									"key": "main_image",
+									"description": "الصورة الرئيسية",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/variable-products",
+							"host": ["{{base_url}}"],
+							"path": ["variable-products"]
+						},
+						"description": "إضافة منتج متغير جديد (مثل المقاسات والألوان)"
+					},
+					"response": []
+				},
+				{
+					"name": "✏️ تعديل منتج متغير",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "بنطلون جينز - محدث",
+									"type": "text"
+								},
+								{
+									"key": "featured",
+									"value": "false",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/variable-products/950",
+							"host": ["{{base_url}}"],
+							"path": ["variable-products", "950"]
+						},
+						"description": "تعديل منتج متغير موجود. استبدل 950 برقم المنتج"
+					},
+					"response": []
+				},
+				{
+					"name": "📋 عرض جميع المنتجات المتغيرة",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/variable-products?page=1&per_page=10",
+							"host": ["{{base_url}}"],
+							"path": ["variable-products"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "10"
+								}
+							]
+						},
+						"description": "عرض جميع المنتجات المتغيرة مع pagination"
+					},
+					"response": []
+				},
+				{
+					"name": "👁️ عرض منتج متغير واحد",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/variable-products/950",
+							"host": ["{{base_url}}"],
+							"path": ["variable-products", "950"]
+						},
+						"description": "عرض تفاصيل منتج متغير واحد مع جميع الاختلافات"
+					},
+					"response": []
+				},
+				{
+					"name": "🔍 البحث في المنتجات المتغيرة",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/variable-products/search?s=جينز&page=1&per_page=10",
+							"host": ["{{base_url}}"],
+							"path": ["variable-products", "search"],
+							"query": [
+								{
+									"key": "s",
+									"value": "جينز"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "10"
+								}
+							]
+						},
+						"description": "البحث في المنتجات المتغيرة"
+					},
+					"response": []
+				},
+				{
+					"name": "🗑️ حذف منتج متغير",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/variable-products/950",
+							"host": ["{{base_url}}"],
+							"path": ["variable-products", "950"]
+						},
+						"description": "حذف منتج متغير مع جميع اختلافاته"
+					},
+					"response": []
+				},
+				{
+					"name": "📊 إحصائيات المنتجات المتغيرة",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/variable-products/stats",
+							"host": ["{{base_url}}"],
+							"path": ["variable-products", "stats"]
+						},
+						"description": "إحصائيات شاملة للمنتجات المتغيرة"
+					},
+					"response": []
+				}
+			],
+			"description": "API لإدارة المنتجات المتغيرة (مثل المقاسات والألوان)"
+		},
+		{
+			"name": "🎯 أمثلة متقدمة",
+			"item": [
+				{
+					"name": "المنتجات الفيزيائية المخفضة بالسعر الأقل",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products?type=physical&on_sale=true&orderby=price&order=ASC&page=1&per_page=20",
+							"host": ["{{base_url}}"],
+							"path": ["products"],
+							"query": [
+								{
+									"key": "type",
+									"value": "physical"
+								},
+								{
+									"key": "on_sale",
+									"value": "true"
+								},
+								{
+									"key": "orderby",
+									"value": "price"
+								},
+								{
+									"key": "order",
+									"value": "ASC"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "20"
+								}
+							]
+						},
+						"description": "دمج عدة فلاتر: فيزيائية + مخفضة + مرتبة بالسعر"
+					},
+					"response": []
+				},
+				{
+					"name": "المنتجات المتغيرة المميزة في تصنيف معين",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products?type=variable&featured=true&category=clothing&orderby=rating&order=DESC",
+							"host": ["{{base_url}}"],
+							"path": ["products"],
+							"query": [
+								{
+									"key": "type",
+									"value": "variable"
+								},
+								{
+									"key": "featured",
+									"value": "true"
+								},
+								{
+									"key": "category",
+									"value": "clothing"
+								},
+								{
+									"key": "orderby",
+									"value": "rating"
+								},
+								{
+									"key": "order",
+									"value": "DESC"
+								}
+							]
+						},
+						"description": "متغيرة + مميزة + تصنيف محدد + مرتبة بالتقييم"
+					},
+					"response": []
+				},
+				{
+					"name": "أول 50 منتج للتطبيقات",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products?page=1&per_page=50&orderby=date&order=DESC",
+							"host": ["{{base_url}}"],
+							"path": ["products"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "50"
+								},
+								{
+									"key": "orderby",
+									"value": "date"
+								},
+								{
+									"key": "order",
+									"value": "DESC"
+								}
+							]
+						},
+						"description": "تحميل 50 منتج دفعة واحدة - مفيد للتطبيقات"
+					},
+					"response": []
+				},
+				{
+					"name": "البحث مع الترتيب حسب السعر",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/search?s=هاتف&orderby=price&type=physical",
+							"host": ["{{base_url}}"],
+							"path": ["products", "search"],
+							"query": [
+								{
+									"key": "s",
+									"value": "هاتف"
+								},
+								{
+									"key": "orderby",
+									"value": "price"
+								},
+								{
+									"key": "type",
+									"value": "physical"
+								}
+							]
+						},
+						"description": "بحث في المنتجات الفيزيائية مع ترتيب النتائج"
+					},
+					"response": []
+				}
+			],
+			"description": "أمثلة على استخدامات متقدمة بدمج عدة فلاتر"
+		}
+	]
+}
+
