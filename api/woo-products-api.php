@@ -43,6 +43,7 @@ function woo_products_api_woocommerce_missing_notice() {
 require_once WOO_PRODUCTS_API_DIR . 'includes/class-authentication.php';
 require_once WOO_PRODUCTS_API_DIR . 'includes/class-physical-products-api.php';
 require_once WOO_PRODUCTS_API_DIR . 'includes/class-variable-products-api.php';
+require_once WOO_PRODUCTS_API_DIR . 'includes/class-all-products-api.php';
 
 // Initialize the plugin
 add_action('rest_api_init', 'woo_products_api_register_routes');
@@ -55,6 +56,10 @@ function woo_products_api_register_routes() {
     // Initialize Variable Products API
     $variable_products_api = new WOO_Variable_Products_API();
     $variable_products_api->register_routes();
+    
+    // Initialize All Products API
+    $all_products_api = new WOO_All_Products_API();
+    $all_products_api->register_routes();
 }
 
 // Add admin menu for API settings
@@ -83,7 +88,58 @@ function woo_products_api_admin_page() {
             <h2>📡 <?php _e('API Endpoints', 'woo-products-api'); ?></h2>
             <p><strong><?php _e('Base URL: ', 'woo-products-api'); ?></strong><code><?php echo esc_html($base_url); ?></code></p>
             
-            <h3>🔵 <?php _e('Physical Products API', 'woo-products-api'); ?></h3>
+            <h3>🟣 <?php _e('All Products API (الجديد)', 'woo-products-api'); ?></h3>
+            <p style="background: #e7f5ff; padding: 10px; border-left: 4px solid #1e90ff;">
+                <strong>📌 الميزة الجديدة:</strong> روت موحد لعرض جميع المنتجات (الفيزيائية والمتغيرة) مع دعم كامل للصفحات والبحث والفلترة
+            </p>
+            <table class="wp-list-table widefat fixed striped">
+                <thead>
+                    <tr>
+                        <th style="width: 100px;"><?php _e('Method', 'woo-products-api'); ?></th>
+                        <th><?php _e('Endpoint', 'woo-products-api'); ?></th>
+                        <th><?php _e('Description', 'woo-products-api'); ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="dashicons dashicons-list-view"></span> GET</td>
+                        <td><code>/products</code></td>
+                        <td><?php _e('عرض جميع المنتجات (فيزيائية + متغيرة) مع pagination + filters', 'woo-products-api'); ?></td>
+                    </tr>
+                    <tr>
+                        <td><span class="dashicons dashicons-search"></span> GET</td>
+                        <td><code>/products/search</code></td>
+                        <td><?php _e('البحث في جميع المنتجات مع pagination', 'woo-products-api'); ?></td>
+                    </tr>
+                    <tr>
+                        <td><span class="dashicons dashicons-visibility"></span> GET</td>
+                        <td><code>/products/{id}</code></td>
+                        <td><?php _e('عرض منتج واحد (أي نوع)', 'woo-products-api'); ?></td>
+                    </tr>
+                    <tr>
+                        <td><span class="dashicons dashicons-chart-bar"></span> GET</td>
+                        <td><code>/products/stats</code></td>
+                        <td><?php _e('إحصائيات شاملة لجميع المنتجات', 'woo-products-api'); ?></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div style="background: #fff9e6; padding: 15px; margin: 10px 0; border-left: 4px solid #ffa500;">
+                <h4 style="margin-top: 0;">🎯 <?php _e('معاملات الفلترة المتاحة:', 'woo-products-api'); ?></h4>
+                <ul style="list-style: disc; margin-left: 20px;">
+                    <li><code>?page=1</code> - رقم الصفحة</li>
+                    <li><code>&per_page=10</code> - عدد المنتجات في الصفحة</li>
+                    <li><code>&type=all|physical|variable</code> - نوع المنتج</li>
+                    <li><code>&status=publish|draft|any</code> - حالة المنتج</li>
+                    <li><code>&featured=true</code> - المنتجات المميزة فقط</li>
+                    <li><code>&on_sale=true</code> - المنتجات المخفضة فقط</li>
+                    <li><code>&category=category-slug</code> - فلترة حسب التصنيف</li>
+                    <li><code>&orderby=date|title|price</code> - ترتيب النتائج</li>
+                    <li><code>&order=ASC|DESC</code> - اتجاه الترتيب</li>
+                </ul>
+            </div>
+            
+            <h3 style="margin-top: 30px;">🔵 <?php _e('Physical Products API', 'woo-products-api'); ?></h3>
             <table class="wp-list-table widefat fixed striped">
                 <thead>
                     <tr>
