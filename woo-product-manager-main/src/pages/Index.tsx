@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import DashboardLayout from '@/components/Layout/DashboardLayout';
 import ProductGrid from '@/components/Products/ProductGrid';
 import AddProductModal from '@/components/Products/AddProductModal';
+import EditProductModal from '@/components/Products/EditProductModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, Search } from 'lucide-react';
@@ -11,6 +12,9 @@ import { useToast } from '@/hooks/use-toast';
 
 const Index = () => {
   const [addModalOpen, setAddModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [editSection, setEditSection] = useState<string>('general');
   const [searchTerm, setSearchTerm] = useState('');
   const { searchProducts, deleteProduct } = useProducts();
   const { toast } = useToast();
@@ -33,11 +37,9 @@ const Index = () => {
   };
 
   const handleEdit = (product: Product, section: string) => {
-    toast({
-      title: 'Edit Feature',
-      description: `Opening ${section} editor for ${product.name}`,
-    });
-    // TODO: Implement edit modals
+    setSelectedProduct(product);
+    setEditSection(section);
+    setEditModalOpen(true);
   };
 
   return (
@@ -74,6 +76,17 @@ const Index = () => {
 
         {/* Add Product Modal */}
         <AddProductModal open={addModalOpen} onClose={() => setAddModalOpen(false)} />
+
+        {/* Edit Product Modal */}
+        <EditProductModal
+          open={editModalOpen}
+          onClose={() => {
+            setEditModalOpen(false);
+            setSelectedProduct(null);
+          }}
+          product={selectedProduct}
+          section={editSection}
+        />
       </div>
     </DashboardLayout>
   );

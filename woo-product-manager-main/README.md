@@ -61,6 +61,7 @@ Each product card displays:
 - Node.js 16+ and npm installed
 - A WooCommerce store with REST API enabled
 - WooCommerce API credentials (Consumer Key & Secret)
+- **WooCommerce Products API Manager** plugin installed on WordPress (included in `/api/`)
 
 ### Quick Start
 
@@ -76,16 +77,16 @@ npm install
 ```
 
 3. **Configure environment variables**
-```bash
-cp .env.example .env
-```
 
-Edit `.env` and add your WooCommerce API credentials:
+Create a `.env.local` file in the root directory:
 ```env
-VITE_WOOCOMMERCE_API_URL=https://your-store.com/wp-json/murjan-api/v1
+VITE_WOOCOMMERCE_API_URL=https://dev.murjan.sa/wp-json/murjan-api/v1
 VITE_WOOCOMMERCE_CONSUMER_KEY=ck_xxxxxxxxxxxxx
 VITE_WOOCOMMERCE_CONSUMER_SECRET=cs_xxxxxxxxxxxxx
+VITE_ITEMS_PER_PAGE=12
 ```
+
+📖 **Detailed setup guide**: See [ENV-SETUP-GUIDE.md](./ENV-SETUP-GUIDE.md)
 
 4. **Start development server**
 ```bash
@@ -93,6 +94,32 @@ npm run dev
 ```
 
 The app will be available at `http://localhost:8080`
+
+## 🔌 Installing the WordPress Plugin (REQUIRED)
+
+Before using this app, you **MUST** install the WooCommerce Products API Manager plugin on your WordPress site:
+
+### Option 1: Upload via WordPress Admin
+
+1. Locate the plugin folder: `/api/` in this repository
+2. Compress the `/api/` folder into a `.zip` file
+3. In WordPress Admin, go to: **Plugins → Add New → Upload Plugin**
+4. Upload the `.zip` file
+5. Click **"Install Now"** then **"Activate"**
+
+### Option 2: FTP Upload
+
+1. Upload the entire `/api/` folder to `/wp-content/plugins/` on your server
+2. In WordPress Admin, go to **Plugins**
+3. Find **"WooCommerce Products API Manager"**
+4. Click **"Activate"**
+
+### Verify Installation
+
+After activation:
+1. You should see a new menu item: **Products API** in WordPress Admin
+2. The plugin automatically handles CORS headers
+3. Your custom API endpoints will be available at: `https://yoursite.com/wp-json/murjan-api/v1`
 
 ## 🔑 Getting WooCommerce API Credentials
 
@@ -105,7 +132,7 @@ The app will be available at `http://localhost:8080`
    - Permissions: **Read/Write**
 5. Click **"Generate API Key"**
 6. Copy the **Consumer Key** and **Consumer Secret**
-7. Add them to your `.env` file
+7. Add them to your `.env.local` file (see ENV-SETUP-GUIDE.md)
 
 ## 📁 Project Structure
 
@@ -117,7 +144,8 @@ src/
 │   ├── Products/
 │   │   ├── ProductCard.tsx        # Individual product card
 │   │   ├── ProductGrid.tsx        # Products grid display
-│   │   └── AddProductModal.tsx    # Add product dialog
+│   │   ├── AddProductModal.tsx    # Add product dialog
+│   │   └── EditProductModal.tsx   # Edit product sections
 │   └── ui/                        # shadcn/ui components
 ├── contexts/
 │   ├── ProductContext.tsx         # Product state management
@@ -200,19 +228,39 @@ View comprehensive store statistics:
 
 ## 🐛 Troubleshooting
 
+### CORS Errors
+
+**Problem**: `Access to XMLHttpRequest has been blocked by CORS policy`
+
+**Solution**: 
+1. ✅ Install and activate the **"WooCommerce Products API Manager"** plugin on your WordPress site
+2. ✅ Plugin location: `/api/woo-products-api.php` (included in this repository)
+3. ✅ The plugin automatically adds required CORS headers
+4. Clear your browser cache and refresh
+
+The plugin adds these headers automatically:
+```php
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Headers: Authorization, Content-Type
+```
+
 ### API Connection Issues
 
 **Problem**: "API not configured" error
 **Solution**: 
-1. Check your `.env` file has correct credentials
+1. Check your `.env.local` file has correct credentials (see `ENV-SETUP-GUIDE.md`)
 2. Verify your WooCommerce REST API is enabled
 3. Ensure your store URL is correct and uses HTTPS
+4. Make sure the API URL ends with `/wp-json/murjan-api/v1`
 
-**Problem**: "Authentication failed"
+**Problem**: "Authentication failed" or 401 Unauthorized
 **Solution**: 
 1. Regenerate API keys in WooCommerce
 2. Make sure permissions are set to "Read/Write"
 3. Check for typos in Consumer Key/Secret
+4. Verify your WordPress user has `manage_woocommerce` capability
 
 ### Build Issues
 
