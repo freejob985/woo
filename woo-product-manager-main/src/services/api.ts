@@ -22,13 +22,19 @@ class WooCommerceAPI {
     const savedKey = localStorage.getItem('woo_consumer_key');
     const savedSecret = localStorage.getItem('woo_consumer_secret');
 
-    // Always use direct API URL (no proxy)
-    this.baseURL = savedUrl || import.meta.env.VITE_WOOCOMMERCE_API_URL || '';
+    // In development, use proxy to avoid CORS issues
+    // In production, use direct API URL
+    const isDevelopment = import.meta.env.DEV;
+    const directUrl = savedUrl || import.meta.env.VITE_WOOCOMMERCE_API_URL || '';
+    
+    this.baseURL = isDevelopment ? '/api' : directUrl;
     this.consumerKey = savedKey || import.meta.env.VITE_WOOCOMMERCE_CONSUMER_KEY || '';
     this.consumerSecret = savedSecret || import.meta.env.VITE_WOOCOMMERCE_CONSUMER_SECRET || '';
     
     console.log('🔧 API Configuration:', {
+      environment: isDevelopment ? 'development' : 'production',
       baseURL: this.baseURL,
+      originalUrl: directUrl,
       hasKey: !!this.consumerKey,
       hasSecret: !!this.consumerSecret
     });
@@ -145,12 +151,17 @@ class WooCommerceAPI {
 
   // Update API credentials
   updateCredentials(apiUrl: string, consumerKey: string, consumerSecret: string) {
-    this.baseURL = apiUrl;
+    // In development, use proxy to avoid CORS issues
+    const isDevelopment = import.meta.env.DEV;
+    
+    this.baseURL = isDevelopment ? '/api' : apiUrl;
     this.consumerKey = consumerKey;
     this.consumerSecret = consumerSecret;
     
     console.log('🔄 API Credentials Updated:', {
+      environment: isDevelopment ? 'development' : 'production',
       baseURL: this.baseURL,
+      originalUrl: apiUrl,
       hasKey: !!this.consumerKey,
       hasSecret: !!this.consumerSecret
     });

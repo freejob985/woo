@@ -1,0 +1,232 @@
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                      🚀 دليل التثبيت والتشغيل                            ║
+║                    Installation & Setup Guide                            ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 المتطلبات (Requirements)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ Node.js 16 أو أحدث
+✅ npm أو yarn
+✅ WordPress مع WooCommerce
+✅ مفاتيح WooCommerce API (Consumer Key & Secret)
+✅ حساب Vercel (للنشر)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚡ التثبيت السريع (5 دقائق)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🪟 على Windows:
+--------------
+
+1. إنشاء ملف .env:
+   → نقرتين على: CREATE-ENV-FILE.bat
+
+2. تثبيت المكتبات:
+   → فتح Terminal (PowerShell أو CMD)
+   → cd woo-product-manager-main
+   → npm install
+
+3. تشغيل التطبيق:
+   → npm run dev
+
+4. فتح المتصفح:
+   → http://localhost:8080
+
+
+🐧 على Linux/Mac:
+-----------------
+
+1. إنشاء ملف .env:
+   cd woo-product-manager-main
+   cp env-template.txt .env
+
+2. تثبيت المكتبات:
+   npm install
+
+3. تشغيل التطبيق:
+   npm run dev
+
+4. فتح المتصفح:
+   http://localhost:8080
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔧 إعداد السيرفر (Backend)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. رفع Plugin:
+   ✅ ارفع مجلد api/ إلى wp-content/plugins/
+   ✅ فعّل Plugin من لوحة WordPress
+   ✅ تحقق من ظهور "Products API" في القائمة الجانبية
+
+2. رفع ملف .htaccess:
+   ✅ افتح ملف: api/.htaccess
+   ✅ ارفعه إلى: public_html/.htaccess على dev.murjan.sa
+   ✅ أو أضف محتواه إلى ملف .htaccess الموجود
+
+3. التحقق من CORS:
+   ✅ افتح: dev.murjan.sa
+   ✅ تحقق من عدم وجود أخطاء في Console (F12)
+
+4. الحصول على مفاتيح API:
+   ✅ WordPress → WooCommerce → Settings
+   ✅ Advanced → REST API
+   ✅ Add Key
+   ✅ انسخ Consumer Key و Consumer Secret
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎨 إعداد Frontend (React App)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. إنشاء ملف .env:
+   ✅ طريقة تلقائية: نقرتين على CREATE-ENV-FILE.bat
+   ✅ طريقة يدوية: انسخ env-template.txt إلى .env
+
+2. محتوى .env:
+   VITE_WOOCOMMERCE_API_URL=https://dev.murjan.sa/wp-json/murjan-api/v1
+   VITE_WOOCOMMERCE_CONSUMER_KEY=ck_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   VITE_WOOCOMMERCE_CONSUMER_SECRET=cs_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+3. التثبيت:
+   npm install
+
+4. التشغيل:
+   npm run dev
+
+5. البناء للإنتاج:
+   npm run build
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+☁️ النشر على Vercel
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. إنشاء حساب:
+   ✅ اذهب إلى: https://vercel.com
+   ✅ سجّل دخول بـ GitHub
+
+2. ربط المشروع:
+   ✅ New Project
+   ✅ Import من GitHub
+   ✅ اختر repository: woo-product-manager-main
+
+3. إعداد Environment Variables:
+   ✅ Settings → Environment Variables
+   ✅ أضف المتغيرات من .env
+
+   Name: VITE_WOOCOMMERCE_API_URL
+   Value: https://dev.murjan.sa/wp-json/murjan-api/v1
+
+   Name: VITE_WOOCOMMERCE_CONSUMER_KEY
+   Value: ck_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+   Name: VITE_WOOCOMMERCE_CONSUMER_SECRET
+   Value: cs_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+4. النشر:
+   ✅ Deploy
+   ✅ انتظر حتى ينتهي البناء
+   ✅ افتح الرابط المخصص (مثل: woo-silk.vercel.app)
+
+5. إعادة النشر بعد التعديلات:
+   git add .
+   git commit -m "Update code"
+   git push
+   (Vercel سينشر تلقائياً)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ التحقق من التثبيت
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+اختبار Backend:
+---------------
+✅ افتح: https://dev.murjan.sa/wp-json/murjan-api/v1/products
+✅ يجب أن تظهر قائمة المنتجات (JSON)
+✅ إذا ظهر خطأ 401: راجع مفاتيح API
+
+اختبار Frontend:
+-----------------
+✅ افتح التطبيق في المتصفح
+✅ اضغط F12 لفتح Console
+✅ تحقق من عدم وجود أخطاء CORS
+✅ يجب أن تظهر المنتجات في الشبكة
+
+اختبار CORS:
+------------
+✅ افتح Console (F12)
+✅ ابحث عن رسائل:
+   🚀 API Request: GET /products
+   ✅ API Response: /products 200
+✅ لا يجب أن تظهر أخطاء CORS
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🐛 حل المشاكل الشائعة
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌ خطأ: Cannot find module
+✅ الحل: npm install
+
+❌ خطأ: CORS blocked
+✅ الحل:
+   1. تحقق من رفع .htaccess على السيرفر
+   2. راجع CORS-SOLUTION-COMPLETE.txt
+
+❌ خطأ: 401 Unauthorized
+✅ الحل:
+   1. تحقق من Consumer Key & Secret في .env
+   2. تأكد من أن المفاتيح لها صلاحيات Read/Write
+
+❌ خطأ: ECONNREFUSED
+✅ الحل:
+   1. تحقق من أن السيرفر يعمل
+   2. راجع رابط API في .env
+
+❌ لا تظهر المنتجات
+✅ الحل:
+   1. افتح Console (F12)
+   2. تحقق من الأخطاء
+   3. تأكد من وجود منتجات في WooCommerce
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📚 أوامر مفيدة
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+تطوير:
+npm run dev              # تشغيل التطبيق (development)
+npm run build            # بناء للإنتاج
+npm run preview          # معاينة البناء
+npm run lint             # فحص الأخطاء
+
+تنظيف:
+rm -rf node_modules      # حذف المكتبات
+npm install              # إعادة التثبيت
+npm cache clean --force  # مسح cache
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📞 الدعم
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+إذا واجهت مشكلة:
+1. راجع START-HERE.txt
+2. راجع QUICK-FIX-AR.txt
+3. راجع CORS-SOLUTION-COMPLETE.txt
+4. تحقق من Console (F12) للأخطاء
+
+
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                      🎉 التثبيت كامل وجاهز!                              ║
+║                    Installation Complete!                                ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+تاريخ: 2025-10-27
+الإصدار: 1.0.0
+
