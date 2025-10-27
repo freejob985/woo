@@ -390,20 +390,74 @@ class WooCommerceAPI {
   // Get statistics
   async getStats(): Promise<Record<string, unknown>> {
     try {
-      const response = await this.api.get('/products/stats');
-      console.log('📊 Stats API Response:', response.data);
+      // Fetch all products to calculate accurate stats
+      const response = await this.api.get('/products', { 
+        params: { 
+          per_page: 100, // Get more products for accurate stats
+          page: 1 
+        } 
+      });
       
-      // Handle both possible response structures
-      if (response.data.statistics) {
-        return response.data.statistics;
-      } else if (response.data.success && response.data.data) {
-        return response.data.data;
-      } else {
-        return response.data;
-      }
+      console.log('📊 Stats calculated from products:', response.data);
+      
+      // Calculate stats from products response
+      const products = response.data.products || [];
+      const totalProducts = response.data.total_products || products.length;
+      
+      // Calculate physical and variable products
+      const physicalProducts = products.filter((p: any) => p.type === 'simple' || p.type === 'physical').length;
+      const variableProducts = products.filter((p: any) => p.type === 'variable').length;
+      const totalVariations = products.reduce((sum: number, p: any) => {
+        return sum + (p.variations?.length || 0);
+      }, 0);
+      
+      // Calculate stock status
+      const inStock = products.filter((p: any) => p.stock_status === 'instock').length;
+      const outOfStock = products.filter((p: any) => p.stock_status === 'outofstock').length;
+      
+      // Calculate sales info
+      const onSale = products.filter((p: any) => p.on_sale === true).length;
+      const featured = products.filter((p: any) => p.featured === true).length;
+      const totalSales = products.reduce((sum: number, p: any) => sum + (parseInt(p.total_sales) || 0), 0);
+      const averageSalesPerProduct = totalProducts > 0 ? totalSales / totalProducts : 0;
+      
+      return {
+        products_overview: {
+          total_products: totalProducts,
+          physical_products: physicalProducts,
+          variable_products: variableProducts,
+          total_variations: totalVariations,
+        },
+        stock_status: {
+          in_stock: inStock,
+          out_of_stock: outOfStock,
+        },
+        sales_info: {
+          total_sales: totalSales,
+          on_sale: onSale,
+          featured: featured,
+          average_sales_per_product: Math.round(averageSalesPerProduct * 100) / 100,
+        }
+      };
     } catch (error) {
-      console.error('❌ Stats API Error:', error);
-      throw error;
+      console.error('❌ Stats calculation error:', error);
+      
+      // Fallback: try stats endpoint
+      try {
+        const statsResponse = await this.api.get('/products/stats');
+        console.log('📊 Stats API Response:', statsResponse.data);
+        
+        if (statsResponse.data.statistics) {
+          return statsResponse.data.statistics;
+        } else if (statsResponse.data.success && statsResponse.data.data) {
+          return statsResponse.data.data;
+        } else {
+          return statsResponse.data;
+        }
+      } catch (statsError) {
+        console.error('❌ Stats API Error:', statsError);
+        throw error;
+      }
     }
   }
 }
