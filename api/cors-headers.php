@@ -38,11 +38,11 @@ function send_cors_headers() {
     // ⭐ List of allowed origins - أضف النطاقات المسموح لها هنا
     $allowed_origins = array(
         // Production Domains - نطاقات الإنتاج
-        'https://woo-silk.vercel.app',
-        'https://woo-4pdx.vercel.app',  // النطاق الجديد
-        'https://dev.murjan.sa',
-        'https://murjan.sa',
-        'https://www.murjan.sa',
+        'https://woo-4pdx.vercel.app',  // ✅ Vercel Production
+        'https://woo-silk.vercel.app',  // ✅ Vercel Alternative
+        'https://dev.murjan.sa',        // ✅ Main Domain
+        'https://murjan.sa',            // ✅ Main Domain (www)
+        'https://www.murjan.sa',        // ✅ Main Domain (with www)
         
         // Development Domains - نطاقات التطوير
         'http://localhost:3000',
@@ -51,8 +51,9 @@ function send_cors_headers() {
         'http://localhost:5175',
         'http://127.0.0.1:3000',
         'http://127.0.0.1:5173',
+        'http://127.0.0.1:5174',
         
-        // 📝 أضف نطاقاتك الإضافية هنا:
+        // 📝 Add more domains here | أضف نطاقات إضافية هنا:
         // 'https://your-domain.com',
         // 'https://staging.your-domain.com',
     );
