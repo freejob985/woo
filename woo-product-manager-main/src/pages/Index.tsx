@@ -1,23 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/Layout/DashboardLayout';
 import ProductGrid from '@/components/Products/ProductGrid';
 import AddProductModal from '@/components/Products/AddProductModal';
 import EditProductModal from '@/components/Products/EditProductModal';
+import { ApiSetupModal } from '@/components/ApiSetup/ApiSetupModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search } from 'lucide-react';
+import { Plus, Search, Settings } from 'lucide-react';
 import { useProducts } from '@/contexts/ProductContext';
 import { Product } from '@/types/product';
 import { useToast } from '@/hooks/use-toast';
+import { wooCommerceAPI } from '@/services/api';
 
 const Index = () => {
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [apiSetupOpen, setApiSetupOpen] = useState(false);
+  const [isApiConfigured, setIsApiConfigured] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [editSection, setEditSection] = useState<string>('general');
   const [searchTerm, setSearchTerm] = useState('');
-  const { searchProducts, deleteProduct } = useProducts();
+  const { searchProducts, deleteProduct, refreshProducts } = useProducts();
   const { toast } = useToast();
+
+  // Check if API is configured on mount
+  useEffect(() => {
+    const checkApiConfig = () => {
+      const configured = wooCommerceAPI.isConfigured();
+      setIsApiConfigured(configured);
+      if (!configured) {
+        setApiSetupOpen(true);
+      }
+    };
+    checkApiConfig();
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +58,15 @@ const Index = () => {
     setEditModalOpen(true);
   };
 
+  const handleApiSetupSuccess = () => {
+    setIsApiConfigured(true);
+    refreshProducts();
+    toast({
+      title: "✅ تم الاتصال بنجاح",
+      description: "تم حفظ بيانات API والاتصال بالمتجر بنجاح",
+    });
+  };
+
   return (
     <DashboardLayout>
       <div className="p-6 space-y-6">
@@ -53,10 +78,20 @@ const Index = () => {
               Manage your WooCommerce products
             </p>
           </div>
-          <Button onClick={() => setAddModalOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Product
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setApiSetupOpen(true)}
+              title="API Settings"
+            >
+              <Settings className="h-4 w-4" />
+            </Button>
+            <Button onClick={() => setAddModalOpen(true)} disabled={!isApiConfigured}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Product
+            </Button>
+          </div>
         </div>
 
         {/* Search Bar */}
@@ -73,6 +108,18 @@ const Index = () => {
 
         {/* Products Grid */}
         <ProductGrid onDelete={handleDelete} onEdit={handleEdit} />
+
+        {/* API Setup Modal */}
+        <ApiSetupModal
+          open={apiSetupOpen}
+          onClose={() => {
+            // Only allow closing if API is configured
+            if (isApiConfigured) {
+              setApiSetupOpen(false);
+            }
+          }}
+          onSuccess={handleApiSetupSuccess}
+        />
 
         {/* Add Product Modal */}
         <AddProductModal open={addModalOpen} onClose={() => setAddModalOpen(false)} />

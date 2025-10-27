@@ -339,3 +339,4 @@ If you followed all steps and it's still not working, open an issue on GitHub wi
 - WordPress plugin list
 - Hosting provider name
 
+

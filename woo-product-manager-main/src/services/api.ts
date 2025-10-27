@@ -17,14 +17,19 @@ class WooCommerceAPI {
   private consumerSecret: string;
 
   constructor() {
+    // Check localStorage first, then fallback to environment variables
+    const savedUrl = localStorage.getItem('woo_api_url');
+    const savedKey = localStorage.getItem('woo_consumer_key');
+    const savedSecret = localStorage.getItem('woo_consumer_secret');
+
     // Use proxy in development, direct API in production
     const isDevelopment = import.meta.env.DEV;
     this.baseURL = isDevelopment 
       ? '/api'  // Use proxy in development
-      : (import.meta.env.VITE_WOOCOMMERCE_API_URL || '');
+      : (savedUrl || import.meta.env.VITE_WOOCOMMERCE_API_URL || '');
     
-    this.consumerKey = import.meta.env.VITE_WOOCOMMERCE_CONSUMER_KEY || '';
-    this.consumerSecret = import.meta.env.VITE_WOOCOMMERCE_CONSUMER_SECRET || '';
+    this.consumerKey = savedKey || import.meta.env.VITE_WOOCOMMERCE_CONSUMER_KEY || '';
+    this.consumerSecret = savedSecret || import.meta.env.VITE_WOOCOMMERCE_CONSUMER_SECRET || '';
 
     this.api = axios.create({
       baseURL: this.baseURL,
@@ -409,24 +414,24 @@ class WooCommerceAPI {
       console.log('📊 Stats calculated from products:', response.data);
       
       // Calculate stats from products response
-      const products = response.data.products || [];
+      const products: Product[] = response.data.products || [];
       const totalProducts = response.data.total_products || products.length;
       
       // Calculate physical and variable products
-      const physicalProducts = products.filter((p: any) => p.type === 'simple' || p.type === 'physical').length;
-      const variableProducts = products.filter((p: any) => p.type === 'variable').length;
-      const totalVariations = products.reduce((sum: number, p: any) => {
+      const physicalProducts = products.filter((p) => p.type !== 'variable').length;
+      const variableProducts = products.filter((p) => p.type === 'variable').length;
+      const totalVariations = products.reduce((sum: number, p) => {
         return sum + (p.variations?.length || 0);
       }, 0);
       
       // Calculate stock status
-      const inStock = products.filter((p: any) => p.stock_status === 'instock').length;
-      const outOfStock = products.filter((p: any) => p.stock_status === 'outofstock').length;
+      const inStock = products.filter((p) => p.stock_status === 'instock').length;
+      const outOfStock = products.filter((p) => p.stock_status === 'outofstock').length;
       
       // Calculate sales info
-      const onSale = products.filter((p: any) => p.on_sale === true).length;
-      const featured = products.filter((p: any) => p.featured === true).length;
-      const totalSales = products.reduce((sum: number, p: any) => sum + (parseInt(p.total_sales) || 0), 0);
+      const onSale = products.filter((p) => p.on_sale === true).length;
+      const featured = products.filter((p) => p.featured === true).length;
+      const totalSales = products.reduce((sum: number, p) => sum + (parseInt(p.total_sales?.toString() || '0') || 0), 0);
       const averageSalesPerProduct = totalProducts > 0 ? totalSales / totalProducts : 0;
       
       return {
