@@ -17,7 +17,12 @@ class WooCommerceAPI {
   private consumerSecret: string;
 
   constructor() {
-    this.baseURL = import.meta.env.VITE_WOOCOMMERCE_API_URL || '';
+    // Use proxy in development, direct API in production
+    const isDevelopment = import.meta.env.DEV;
+    this.baseURL = isDevelopment 
+      ? '/api'  // Use proxy in development
+      : (import.meta.env.VITE_WOOCOMMERCE_API_URL || '');
+    
     this.consumerKey = import.meta.env.VITE_WOOCOMMERCE_CONSUMER_KEY || '';
     this.consumerSecret = import.meta.env.VITE_WOOCOMMERCE_CONSUMER_SECRET || '';
 
@@ -32,6 +37,7 @@ class WooCommerceAPI {
         'Accept': 'application/json',
       },
       timeout: 30000,
+      withCredentials: false, // Important for CORS
     });
 
     // Add request interceptor for error handling
@@ -132,7 +138,8 @@ class WooCommerceAPI {
 
   // Update API credentials
   updateCredentials(apiUrl: string, consumerKey: string, consumerSecret: string) {
-    this.baseURL = apiUrl;
+    const isDevelopment = import.meta.env.DEV;
+    this.baseURL = isDevelopment ? '/api' : apiUrl;
     this.consumerKey = consumerKey;
     this.consumerSecret = consumerSecret;
 
@@ -147,6 +154,7 @@ class WooCommerceAPI {
         'Accept': 'application/json',
       },
       timeout: 30000,
+      withCredentials: false,
     });
 
     // Re-apply interceptors
