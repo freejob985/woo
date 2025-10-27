@@ -22,14 +22,16 @@ class WooCommerceAPI {
     const savedKey = localStorage.getItem('woo_consumer_key');
     const savedSecret = localStorage.getItem('woo_consumer_secret');
 
-    // Use proxy in development, direct API in production
-    const isDevelopment = import.meta.env.DEV;
-    this.baseURL = isDevelopment 
-      ? '/api'  // Use proxy in development
-      : (savedUrl || import.meta.env.VITE_WOOCOMMERCE_API_URL || '');
-    
+    // Always use direct API URL (no proxy)
+    this.baseURL = savedUrl || import.meta.env.VITE_WOOCOMMERCE_API_URL || '';
     this.consumerKey = savedKey || import.meta.env.VITE_WOOCOMMERCE_CONSUMER_KEY || '';
     this.consumerSecret = savedSecret || import.meta.env.VITE_WOOCOMMERCE_CONSUMER_SECRET || '';
+    
+    console.log('🔧 API Configuration:', {
+      baseURL: this.baseURL,
+      hasKey: !!this.consumerKey,
+      hasSecret: !!this.consumerSecret
+    });
 
     this.api = axios.create({
       baseURL: this.baseURL,
@@ -143,10 +145,15 @@ class WooCommerceAPI {
 
   // Update API credentials
   updateCredentials(apiUrl: string, consumerKey: string, consumerSecret: string) {
-    const isDevelopment = import.meta.env.DEV;
-    this.baseURL = isDevelopment ? '/api' : apiUrl;
+    this.baseURL = apiUrl;
     this.consumerKey = consumerKey;
     this.consumerSecret = consumerSecret;
+    
+    console.log('🔄 API Credentials Updated:', {
+      baseURL: this.baseURL,
+      hasKey: !!this.consumerKey,
+      hasSecret: !!this.consumerSecret
+    });
 
     this.api = axios.create({
       baseURL: this.baseURL,
@@ -403,19 +410,29 @@ class WooCommerceAPI {
   // Get statistics
   async getStats(): Promise<Record<string, unknown>> {
     try {
-      // Fetch all products to calculate accurate stats
-      const response = await this.api.get('/products', { 
+      console.log('📊 Fetching all products for accurate statistics...');
+      
+      // First, get total count
+      const initialResponse = await this.api.get('/products', { 
         params: { 
-          per_page: 100, // Get more products for accurate stats
+          per_page: 1, 
           page: 1 
         } 
       });
       
-      console.log('📊 Stats calculated from products:', response.data);
+      const totalProducts = initialResponse.data.total_products || 0;
+      console.log(`📊 Total products in database: ${totalProducts}`);
       
-      // Calculate stats from products response
-      const products: Product[] = response.data.products || [];
-      const totalProducts = response.data.total_products || products.length;
+      // Fetch ALL products (up to 500 for accurate stats)
+      const allProductsResponse = await this.api.get('/products', { 
+        params: { 
+          per_page: Math.min(totalProducts, 500), // Fetch all, but max 500
+          page: 1 
+        } 
+      });
+      
+      const products: Product[] = allProductsResponse.data.products || [];
+      console.log(`📊 Retrieved ${products.length} products for stats calculation`);
       
       // Calculate physical and variable products
       const physicalProducts = products.filter((p) => p.type !== 'variable').length;
@@ -434,7 +451,7 @@ class WooCommerceAPI {
       const totalSales = products.reduce((sum: number, p) => sum + (parseInt(p.total_sales?.toString() || '0') || 0), 0);
       const averageSalesPerProduct = totalProducts > 0 ? totalSales / totalProducts : 0;
       
-      return {
+      const stats = {
         products_overview: {
           total_products: totalProducts,
           physical_products: physicalProducts,
@@ -452,6 +469,10 @@ class WooCommerceAPI {
           average_sales_per_product: Math.round(averageSalesPerProduct * 100) / 100,
         }
       };
+      
+      console.log('📊 Final calculated stats:', stats);
+      return stats;
+      
     } catch (error) {
       console.error('❌ Stats calculation error:', error);
       
