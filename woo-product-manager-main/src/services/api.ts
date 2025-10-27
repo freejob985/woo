@@ -48,15 +48,22 @@ class WooCommerceAPI {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
       },
       timeout: 30000,
-      withCredentials: false, // Important for CORS
+      withCredentials: false, // Set to false for cross-origin requests with '*' origin
     });
 
-    // Add request interceptor for error handling
+    // Add request interceptor for error handling and CORS
     this.api.interceptors.request.use(
       (config) => {
         console.log(`🚀 API Request: ${config.method?.toUpperCase()} ${config.url}`);
+        
+        // Ensure proper headers for CORS
+        if (!config.headers['X-Requested-With']) {
+          config.headers['X-Requested-With'] = 'XMLHttpRequest';
+        }
+        
         return config;
       },
       (error) => {
@@ -175,9 +182,10 @@ class WooCommerceAPI {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
       },
       timeout: 30000,
-      withCredentials: false,
+      withCredentials: false, // Set to false for cross-origin requests with '*' origin
     });
 
     // Re-apply interceptors

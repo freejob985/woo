@@ -11,8 +11,10 @@ export default defineConfig(({ mode }) => ({
     cors: {
       origin: '*',
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-      allowedHeaders: ['Authorization', 'Content-Type', 'X-WP-Nonce', 'X-Requested-With', 'Accept', 'Origin'],
+      allowedHeaders: ['Authorization', 'Content-Type', 'X-WP-Nonce', 'X-Requested-With', 'Accept', 'Origin', 'X-Api-Key'],
+      exposedHeaders: ['X-WP-Total', 'X-WP-TotalPages'],
       credentials: true,
+      maxAge: 86400,
     },
     proxy: {
       '/api': {
@@ -26,9 +28,16 @@ export default defineConfig(({ mode }) => ({
           });
           proxy.on('proxyReq', (proxyReq, req, _res) => {
             console.log('🚀 Proxy request:', req.method, req.url);
+            // Add CORS headers to proxy request
+            proxyReq.setHeader('Origin', 'https://woo-4pdx.vercel.app');
           });
           proxy.on('proxyRes', (proxyRes, req, _res) => {
             console.log('✅ Proxy response:', proxyRes.statusCode, req.url);
+            // Ensure CORS headers are present in response
+            proxyRes.headers['access-control-allow-origin'] = '*';
+            proxyRes.headers['access-control-allow-credentials'] = 'true';
+            proxyRes.headers['access-control-allow-methods'] = 'GET, POST, PUT, DELETE, OPTIONS, PATCH';
+            proxyRes.headers['access-control-allow-headers'] = 'Authorization, Content-Type, X-WP-Nonce, X-Requested-With, Accept, Origin, X-Api-Key';
           });
         },
       },
