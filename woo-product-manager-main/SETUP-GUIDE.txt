@@ -1,0 +1,79 @@
+===============================================
+WooCommerce Product Manager - دليل الإعداد السريع
+===============================================
+
+الخطوة 1: تثبيت وتفعيل WordPress Plugin
+-----------------------------------------
+1. انسخ مجلد "api" إلى wp-content/plugins/woo-products-api
+2. فعل الإضافة من لوحة تحكم WordPress
+3. تأكد من تفعيل WooCommerce أولاً
+
+الخطوة 2: الحصول على مفاتيح API
+---------------------------------
+1. اذهب إلى: WooCommerce > Settings > Advanced > REST API
+2. اضغط "Add Key"
+3. الوصف: "Product Manager App"
+4. المستخدم: اختر مستخدم Admin
+5. الصلاحيات: Read/Write
+6. اضغط "Generate API Key"
+7. انسخ Consumer Key و Consumer Secret
+
+الخطوة 3: إعداد React App
+---------------------------
+1. افتح مجلد woo-product-manager-main
+2. انسخ env.example إلى .env
+3. عدل ملف .env:
+   
+   VITE_WOOCOMMERCE_API_URL=https://your-site.com/wp-json/murjan-api/v1
+   VITE_WOOCOMMERCE_CONSUMER_KEY=ck_xxxxx
+   VITE_WOOCOMMERCE_CONSUMER_SECRET=cs_xxxxx
+   VITE_ITEMS_PER_PAGE=12
+
+4. ثبت المكتبات:
+   npm install
+
+5. شغل التطبيق:
+   npm run dev
+
+الخطوة 4: اختبار الاتصال
+--------------------------
+1. افتح المتصفح على: http://localhost:5173
+2. يجب أن ترى المنتجات تحمل من WooCommerce
+3. جرب إضافة منتج جديد
+4. جرب تعديل منتج موجود
+5. جرب حذف منتج
+
+حل مشاكل CORS الشائعة
+----------------------
+إذا واجهت خطأ CORS:
+
+1. تأكد من تفعيل الإضافة في WordPress
+2. تأكد من صحة مفاتيح API
+3. تأكد من أن URL يحتوي على /wp-json/murjan-api/v1
+4. تحقق من إعدادات الخادم (Apache/Nginx)
+5. للتطوير المحلي، استخدم https بدلاً من http
+
+الميزات المتوفرة
+------------------
+✓ عرض جميع المنتجات (Simple & Variable)
+✓ البحث في المنتجات
+✓ إضافة منتجات جديدة (Simple & Variable)
+✓ تعديل المنتجات عبر Modals:
+  - General (المعلومات العامة)
+  - Inventory (المخزون)
+  - Shipping (الشحن)
+  - Media (الصور)
+  - Variations (المتغيرات للمنتجات المتغيرة)
+  - Settings (إعدادات النشر)
+✓ حذف المنتجات
+✓ Pagination
+✓ رفع الصور
+
+الدعم الفني
+------------
+للأسئلة أو المساعدة، راجع:
+- ملف API-DOCUMENTATION-AR.md في مجلد api
+- ملف CORS-SOLUTION.md للمساعدة في حل مشاكل CORS
+
+===============================================
+

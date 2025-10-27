@@ -1,0 +1,248 @@
+===============================================
+دليل استكشاف الأخطاء وإصلاحها
+===============================================
+
+مشكلة: CORS Error
+------------------
+الخطأ:
+"Access to XMLHttpRequest has been blocked by CORS policy"
+
+الحلول:
+
+1. تأكد من تفعيل الإضافة:
+   - افتح WordPress Admin
+   - اذهب إلى Plugins
+   - تأكد من تفعيل "WooCommerce Products API Manager"
+
+2. تحقق من headers:
+   - افتح Network Tab في المتصفح
+   - ابحث عن الطلب الفاشل
+   - تحقق من Response Headers
+   - يجب أن ترى: Access-Control-Allow-Origin: *
+
+3. إعدادات Apache (.htaccess):
+   أضف في ملف .htaccess:
+   
+   Header set Access-Control-Allow-Origin "*"
+   Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+   Header set Access-Control-Allow-Headers "Authorization, Content-Type"
+
+4. إعدادات Nginx:
+   أضف في ملف nginx.conf:
+   
+   add_header Access-Control-Allow-Origin *;
+   add_header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS";
+   add_header Access-Control-Allow-Headers "Authorization, Content-Type";
+
+5. مشكلة SSL:
+   - تأكد من استخدام https:// في كلا الطرفين
+   - أو استخدم http:// في كلا الطرفين (للتطوير فقط)
+
+مشكلة: Authentication Failed
+------------------------------
+الخطأ:
+"Authentication failed. Check your Consumer Key and Secret."
+
+الحلول:
+
+1. تحقق من صحة المفاتيح:
+   - افتح WooCommerce > Settings > Advanced > REST API
+   - احذف المفتاح القديم
+   - أنشئ مفتاح جديد
+   - انسخ Consumer Key و Secret بدقة
+
+2. تحقق من ملف .env:
+   - تأكد من عدم وجود مسافات زائدة
+   - تأكد من استخدام الأقواس الصحيحة
+   - لا تضع المفاتيح بين علامات اقتباس إضافية
+
+3. تحقق من الصلاحيات:
+   - يجب أن تكون الصلاحيات: Read/Write
+   - المستخدم يجب أن يكون Administrator
+
+4. أعد تشغيل التطبيق:
+   npm run dev
+
+مشكلة: API not configured
+---------------------------
+الخطأ:
+"API not configured. Please configure your WooCommerce API credentials."
+
+الحلول:
+
+1. أنشئ ملف .env:
+   - انسخ env.example إلى .env
+   - املأ جميع الحقول المطلوبة
+
+2. تحقق من محتويات .env:
+   VITE_WOOCOMMERCE_API_URL=https://your-site.com/wp-json/murjan-api/v1
+   VITE_WOOCOMMERCE_CONSUMER_KEY=ck_xxxxx
+   VITE_WOOCOMMERCE_CONSUMER_SECRET=cs_xxxxx
+
+3. أعد تشغيل npm:
+   - أوقف الخادم (Ctrl+C)
+   - npm run dev
+
+مشكلة: No products found
+-------------------------
+الأسباب المحتملة:
+
+1. لا توجد منتجات في WooCommerce:
+   - أضف منتجات من WordPress Admin
+   - أو استخدم زر "Add Product" في التطبيق
+
+2. المنتجات في حالة Draft:
+   - تحقق من حالة المنتجات في WordPress
+   - غيرها إلى Published
+
+3. مشكلة في الفلترة:
+   - امسح البحث
+   - أعد تحميل الصفحة
+
+مشكلة: Failed to create product
+---------------------------------
+الخطأ:
+"Failed to create product"
+
+الحلول:
+
+1. تحقق من الحقول المطلوبة:
+   - Product Name: مطلوب
+   - Regular Price: مطلوب
+
+2. تحقق من صلاحيات الملفات:
+   - wp-content/uploads يجب أن يكون قابل للكتابة (755)
+
+3. تحقق من حجم الصورة:
+   - يجب ألا تتجاوز الحد المسموح في PHP
+   - تحقق من upload_max_filesize في php.ini
+
+4. تحقق من Console للأخطاء التفصيلية
+
+مشكلة: Failed to upload image
+-------------------------------
+الحلول:
+
+1. تحقق من صلاحيات المجلد:
+   chmod 755 wp-content/uploads
+
+2. تحقق من إعدادات PHP:
+   - upload_max_filesize = 64M
+   - post_max_size = 64M
+   - memory_limit = 256M
+
+3. تحقق من نوع الصورة:
+   - المسموح: JPG, PNG, GIF, WebP
+   - الحجم الأقصى: عادة 2-5 MB
+
+مشكلة: Slow performance
+------------------------
+الأسباب والحلول:
+
+1. عدد كبير من المنتجات:
+   - قلل per_page في .env
+   - VITE_ITEMS_PER_PAGE=8
+
+2. صور كبيرة:
+   - استخدم صور مضغوطة
+   - استخدم WebP format
+
+3. خادم بطيء:
+   - تحقق من موارد الخادم
+   - استخدم caching
+
+مشكلة: Variations not showing
+-------------------------------
+للمنتجات المتغيرة:
+
+1. تأكد من وجود متغيرات:
+   - افتح المنتج في WordPress Admin
+   - تحقق من تبويب Variations
+
+2. أعد تحميل البيانات:
+   - اضغط F5 لتحديث الصفحة
+
+مشكلة: Delete not working
+---------------------------
+الحلول:
+
+1. تحقق من الصلاحيات:
+   - API Key يجب أن يملك صلاحيات Write
+
+2. تحقق من حالة المنتج:
+   - المنتجات في Trash قد لا تحذف
+   - امسحها من Trash في WordPress أولاً
+
+مشكلة: Console errors
+----------------------
+أخطاء شائعة في Console:
+
+1. "Network Error":
+   → تحقق من الاتصال بالإنترنت
+   → تحقق من URL
+
+2. "401 Unauthorized":
+   → مشكلة في المفاتيح
+   → راجع قسم Authentication
+
+3. "404 Not Found":
+   → تحقق من صحة URL
+   → يجب أن ينتهي بـ /murjan-api/v1
+
+4. "500 Internal Server Error":
+   → مشكلة في الخادم
+   → تحقق من error logs في WordPress
+
+كيفية الحصول على Logs
+-----------------------
+
+WordPress Debug:
+1. عدل wp-config.php
+2. أضف:
+   define('WP_DEBUG', true);
+   define('WP_DEBUG_LOG', true);
+3. اقرأ: wp-content/debug.log
+
+Browser Console:
+1. اضغط F12
+2. تبويب Console
+3. انسخ الأخطاء للتحليل
+
+Network Tab:
+1. F12 > Network
+2. Filter: Fetch/XHR
+3. شاهد الطلبات والاستجابات
+
+نصائح عامة
+------------
+
+1. ابدأ بالأساسيات:
+   ✓ الإضافة مفعلة؟
+   ✓ WooCommerce مفعل؟
+   ✓ المفاتيح صحيحة؟
+   ✓ URL صحيح؟
+
+2. استخدم الأدوات:
+   - Browser DevTools
+   - WordPress Debug
+   - Postman للاختبار اليدوي
+
+3. اختبر تدريجياً:
+   - اختبر الاتصال أولاً
+   - ثم اختبر عملية واحدة
+   - ثم اختبر بقية العمليات
+
+4. راجع الوثائق:
+   - SETUP-GUIDE.txt
+   - TESTING-GUIDE.txt
+   - API documentation في مجلد api
+
+5. تواصل للدعم:
+   - وصف المشكلة بدقة
+   - أرفق Console errors
+   - أرفق Network logs
+
+===============================================
+معظم المشاكل تحل بإعادة التحقق من الإعدادات!
+===============================================
+

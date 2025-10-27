@@ -20,8 +20,52 @@ class WooCommerceAPI {
       },
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
       },
+      timeout: 30000,
     });
+
+    // Add request interceptor for error handling
+    this.api.interceptors.request.use(
+      (config) => {
+        console.log(`🚀 API Request: ${config.method?.toUpperCase()} ${config.url}`);
+        return config;
+      },
+      (error) => {
+        console.error('❌ Request Error:', error);
+        return Promise.reject(error);
+      }
+    );
+
+    // Add response interceptor for better error messages
+    this.api.interceptors.response.use(
+      (response) => {
+        console.log(`✅ API Response: ${response.config.url}`, response.status);
+        return response;
+      },
+      (error) => {
+        if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+          console.error('🚫 CORS Error or Network Issue:', error);
+          throw new Error(
+            'CORS Error: Cannot connect to API. Please ensure:\n' +
+            '1. WordPress plugin is activated\n' +
+            '2. CORS headers are properly configured\n' +
+            '3. API credentials are correct in .env file'
+          );
+        }
+        
+        if (error.response?.status === 401) {
+          throw new Error('Authentication failed. Check your Consumer Key and Secret.');
+        }
+        
+        if (error.response?.status === 403) {
+          throw new Error('Permission denied. Ensure your API key has proper permissions.');
+        }
+        
+        console.error('❌ API Error:', error);
+        return Promise.reject(error);
+      }
+    );
   }
 
   // Check if API is configured
@@ -43,8 +87,51 @@ class WooCommerceAPI {
       },
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
       },
+      timeout: 30000,
     });
+
+    // Re-apply interceptors
+    this.api.interceptors.request.use(
+      (config) => {
+        console.log(`🚀 API Request: ${config.method?.toUpperCase()} ${config.url}`);
+        return config;
+      },
+      (error) => {
+        console.error('❌ Request Error:', error);
+        return Promise.reject(error);
+      }
+    );
+
+    this.api.interceptors.response.use(
+      (response) => {
+        console.log(`✅ API Response: ${response.config.url}`, response.status);
+        return response;
+      },
+      (error) => {
+        if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+          console.error('🚫 CORS Error or Network Issue:', error);
+          throw new Error(
+            'CORS Error: Cannot connect to API. Please ensure:\n' +
+            '1. WordPress plugin is activated\n' +
+            '2. CORS headers are properly configured\n' +
+            '3. API credentials are correct in .env file'
+          );
+        }
+        
+        if (error.response?.status === 401) {
+          throw new Error('Authentication failed. Check your Consumer Key and Secret.');
+        }
+        
+        if (error.response?.status === 403) {
+          throw new Error('Permission denied. Ensure your API key has proper permissions.');
+        }
+        
+        console.error('❌ API Error:', error);
+        return Promise.reject(error);
+      }
+    );
   }
 
   // Get all products with filters
@@ -196,7 +283,7 @@ class WooCommerceAPI {
   }
 
   // Get statistics
-  async getStats(): Promise<any> {
+  async getStats(): Promise<Record<string, unknown>> {
     const response = await this.api.get('/products/stats');
     return response.data.statistics;
   }

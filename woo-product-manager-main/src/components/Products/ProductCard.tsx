@@ -20,7 +20,12 @@ import {
   Boxes,
   Truck,
   Link as LinkIcon,
+  Loader2,
+  Save as SaveIcon,
 } from 'lucide-react';
+import { wooCommerceAPI } from '@/services/api';
+import { useToast } from '@/hooks/use-toast';
+import { useProducts } from '@/contexts/ProductContext';
 
 interface ProductCardProps {
   product: Product;
@@ -30,6 +35,9 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onDelete, onEdit }) => {
   const [imageError, setImageError] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const { toast } = useToast();
+  const { refreshProducts } = useProducts();
 
   const stockStatusColor = {
     instock: 'text-success',
@@ -39,6 +47,40 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onDelete, onEdit }) 
 
   const productTypeLabel = product.type === 'variable' ? 'Variable' : 'Simple';
   const availability = product.stock_status === 'instock' ? 'In Stock' : 'Out of Stock';
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      // This is a quick save - it doesn't change anything but confirms the product is synced
+      // In a real scenario, you would track changes and only save modified fields
+      if (product.type === 'variable') {
+        await wooCommerceAPI.updateVariableProduct(product.id, {
+          name: product.name,
+          status: product.status,
+        });
+      } else {
+        await wooCommerceAPI.updatePhysicalProduct(product.id, {
+          name: product.name,
+          status: product.status,
+        });
+      }
+      
+      toast({
+        title: 'Success',
+        description: 'Product saved successfully',
+      });
+      
+      await refreshProducts();
+    } catch (err: any) {
+      toast({
+        title: 'Error',
+        description: err.message || 'Failed to save product',
+        variant: 'destructive',
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <Card className="group hover:shadow-lg transition-shadow duration-200 bg-dashboard-card hover:bg-dashboard-card-hover">
@@ -153,8 +195,24 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onDelete, onEdit }) 
 
         {/* Row 5: Actions */}
         <div className="flex items-center justify-between gap-2 pt-2 border-t">
-          <Button variant="default" size="sm" className="flex-1">
-            Save
+          <Button 
+            variant="default" 
+            size="sm" 
+            className="flex-1"
+            onClick={handleSave}
+            disabled={saving}
+          >
+            {saving ? (
+              <>
+                <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <SaveIcon className="h-3 w-3 mr-1" />
+                Save
+              </>
+            )}
           </Button>
           
           <DropdownMenu>

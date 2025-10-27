@@ -1,0 +1,182 @@
+===============================================
+الأوامر السريعة للتطبيق
+===============================================
+
+أوامر npm الأساسية
+---------------------
+
+# تثبيت المكتبات (مرة واحدة)
+npm install
+
+# تشغيل التطبيق في وضع التطوير
+npm run dev
+
+# بناء التطبيق للإنتاج
+npm run build
+
+# معاينة البناء
+npm run preview
+
+# فحص الأكواد (Linting)
+npm run lint
+
+
+أوامر Git
+----------
+
+# إضافة التغييرات
+git add .
+
+# حفظ التغييرات
+git commit -m "وصف التغيير"
+
+# رفع إلى GitHub
+git push origin main
+
+
+الإعداد السريع (خطوة بخطوة)
+-------------------------------
+
+الخطوة 1: نسخ ملف البيئة
+cp env.example .env
+
+الخطوة 2: تعديل .env
+# افتح .env بمحرر نصوص وعدل:
+# - VITE_WOOCOMMERCE_API_URL
+# - VITE_WOOCOMMERCE_CONSUMER_KEY
+# - VITE_WOOCOMMERCE_CONSUMER_SECRET
+
+الخطوة 3: تثبيت
+npm install
+
+الخطوة 4: تشغيل
+npm run dev
+
+الخطوة 5: فتح المتصفح
+http://localhost:5173
+
+
+أوامر استكشاف الأخطاء
+-----------------------
+
+# حذف node_modules وإعادة التثبيت
+rm -rf node_modules
+npm install
+
+# تنظيف الكاش
+npm cache clean --force
+
+# تحديث المكتبات
+npm update
+
+
+النشر على Vercel
+------------------
+
+الخطوة 1: تثبيت Vercel CLI
+npm i -g vercel
+
+الخطوة 2: تسجيل الدخول
+vercel login
+
+الخطوة 3: النشر
+vercel
+
+الخطوة 4: إضافة Environment Variables
+# في لوحة Vercel:
+# Settings > Environment Variables
+# أضف:
+# - VITE_WOOCOMMERCE_API_URL
+# - VITE_WOOCOMMERCE_CONSUMER_KEY
+# - VITE_WOOCOMMERCE_CONSUMER_SECRET
+
+
+النشر على Netlify
+-------------------
+
+الخطوة 1: تثبيت Netlify CLI
+npm install -g netlify-cli
+
+الخطوة 2: تسجيل الدخول
+netlify login
+
+الخطوة 3: البناء والنشر
+npm run build
+netlify deploy --prod
+
+الخطوة 4: إضافة Environment Variables
+# في لوحة Netlify:
+# Site settings > Build & deploy > Environment
+# أضف المتغيرات المطلوبة
+
+
+أوامر WordPress Plugin
+-----------------------
+
+# نسخ Plugin إلى WordPress
+cp -r api /path/to/wordpress/wp-content/plugins/woo-products-api
+
+# تفعيل Plugin (من سطر الأوامر)
+wp plugin activate woo-products-api
+
+# عرض قائمة Plugins
+wp plugin list
+
+# إلغاء تفعيل Plugin
+wp plugin deactivate woo-products-api
+
+
+أدوات مفيدة
+-------------
+
+# فحص صلاحية JSON
+cat .env | grep VITE
+
+# اختبار API من سطر الأوامر (curl)
+curl -u "consumer_key:consumer_secret" \
+  https://your-site.com/wp-json/murjan-api/v1/products
+
+# اختبار CORS
+curl -I \
+  -H "Origin: https://woo-silk.vercel.app" \
+  https://dev.murjan.sa/wp-json/murjan-api/v1/products
+
+
+المنافذ المستخدمة
+-------------------
+
+Development: http://localhost:5173
+Preview: http://localhost:4173
+
+
+متغيرات البيئة المطلوبة
+---------------------------
+
+VITE_WOOCOMMERCE_API_URL=https://your-site.com/wp-json/murjan-api/v1
+VITE_WOOCOMMERCE_CONSUMER_KEY=ck_xxxxxxxxxxxxx
+VITE_WOOCOMMERCE_CONSUMER_SECRET=cs_xxxxxxxxxxxxx
+VITE_ITEMS_PER_PAGE=12
+
+
+الملفات المهمة
+----------------
+
+env.example          - مثال لملف البيئة
+SETUP-GUIDE.txt      - دليل الإعداد الكامل
+TESTING-GUIDE.txt    - دليل الاختبار
+TROUBLESHOOTING.txt  - حل المشاكل
+COMMANDS.txt         - هذا الملف
+
+
+روابط مفيدة
+------------
+
+React: https://react.dev
+Vite: https://vitejs.dev
+WooCommerce API: https://woocommerce.github.io/woocommerce-rest-api-docs
+Tailwind CSS: https://tailwindcss.com
+shadcn/ui: https://ui.shadcn.com
+
+
+===============================================
+
