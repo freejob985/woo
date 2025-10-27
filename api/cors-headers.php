@@ -35,16 +35,25 @@ if (!defined('ABSPATH')) {
  * Function to send CORS headers
  */
 function send_cors_headers() {
-    // List of allowed origins (add your domains here)
+    // ⭐ List of allowed origins - أضف النطاقات المسموح لها هنا
     $allowed_origins = array(
+        // Production Domains - نطاقات الإنتاج
         'https://woo-silk.vercel.app',
         'https://dev.murjan.sa',
+        'https://murjan.sa',
+        'https://www.murjan.sa',
+        
+        // Development Domains - نطاقات التطوير
         'http://localhost:3000',
         'http://localhost:5173',
         'http://localhost:5174',
         'http://localhost:5175',
         'http://127.0.0.1:3000',
         'http://127.0.0.1:5173',
+        
+        // 📝 أضف نطاقاتك الإضافية هنا:
+        // 'https://your-domain.com',
+        // 'https://staging.your-domain.com',
     );
     
     // Get the origin of the request
