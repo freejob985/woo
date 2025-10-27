@@ -1,0 +1,208 @@
+{
+  "name": "WooCommerce Product Manager Setup Guide",
+  "version": "1.0.0",
+  "description": "دليل الإعداد السريع - Quick Setup Guide",
+  
+  "requirements": {
+    "backend": {
+      "wordpress": "5.8+",
+      "woocommerce": "5.0+",
+      "php": "7.4+"
+    },
+    "frontend": {
+      "node": "18+",
+      "npm": "9+"
+    }
+  },
+
+  "setup_steps": {
+    "1_backend_setup": {
+      "title_ar": "إعداد WordPress Backend",
+      "title_en": "WordPress Backend Setup",
+      "steps": [
+        {
+          "step": 1,
+          "description_ar": "ارفع مجلد api/ إلى wp-content/plugins/woo-products-api/",
+          "description_en": "Upload api/ folder to wp-content/plugins/woo-products-api/"
+        },
+        {
+          "step": 2,
+          "description_ar": "فعّل الـ plugin من WordPress Admin > Plugins",
+          "description_en": "Activate plugin from WordPress Admin > Plugins"
+        },
+        {
+          "step": 3,
+          "description_ar": "انسخ api/cors-headers.php إلى wp-content/mu-plugins/ (أو سيتم تفعيله تلقائياً)",
+          "description_en": "Copy api/cors-headers.php to wp-content/mu-plugins/ (or auto-enabled)"
+        },
+        {
+          "step": 4,
+          "description_ar": "أضف domain الخاص بك في allowed_origins في cors-headers.php",
+          "description_en": "Add your domain to allowed_origins in cors-headers.php",
+          "file": "api/cors-headers.php",
+          "line": 40,
+          "example": "https://your-app.vercel.app"
+        },
+        {
+          "step": 5,
+          "description_ar": "أنشئ WooCommerce API Keys",
+          "description_en": "Create WooCommerce API Keys",
+          "path": "WooCommerce → Settings → Advanced → REST API → Add Key",
+          "permissions": "Read/Write"
+        }
+      ]
+    },
+
+    "2_frontend_setup": {
+      "title_ar": "إعداد React Frontend",
+      "title_en": "React Frontend Setup",
+      "steps": [
+        {
+          "step": 1,
+          "command": "cd woo-product-manager-main",
+          "description": "Navigate to frontend directory"
+        },
+        {
+          "step": 2,
+          "command": "npm install",
+          "description": "Install dependencies"
+        },
+        {
+          "step": 3,
+          "description_ar": "انسخ .env.example إلى .env",
+          "description_en": "Copy .env.example to .env",
+          "command": "cp env.example .env"
+        },
+        {
+          "step": 4,
+          "description_ar": "حدّث قيم .env بمعلومات API الخاصة بك",
+          "description_en": "Update .env with your API credentials",
+          "env_vars": {
+            "VITE_WOOCOMMERCE_API_URL": "https://dev.murjan.sa/wp-json/murjan-api/v1",
+            "VITE_WOOCOMMERCE_CONSUMER_KEY": "ck_your_key_here",
+            "VITE_WOOCOMMERCE_CONSUMER_SECRET": "cs_your_secret_here",
+            "VITE_ITEMS_PER_PAGE": "12"
+          }
+        },
+        {
+          "step": 5,
+          "command": "npm run dev",
+          "description": "Start development server",
+          "url": "http://localhost:5173"
+        }
+      ]
+    },
+
+    "3_deployment": {
+      "title_ar": "النشر على Vercel",
+      "title_en": "Deploy to Vercel",
+      "steps": [
+        {
+          "step": 1,
+          "description": "Install Vercel CLI",
+          "command": "npm i -g vercel"
+        },
+        {
+          "step": 2,
+          "description": "Build the project",
+          "command": "npm run build"
+        },
+        {
+          "step": 3,
+          "description": "Deploy to Vercel",
+          "command": "vercel"
+        },
+        {
+          "step": 4,
+          "description_ar": "أضف Environment Variables في Vercel Dashboard",
+          "description_en": "Add Environment Variables in Vercel Dashboard",
+          "variables": [
+            "VITE_WOOCOMMERCE_API_URL",
+            "VITE_WOOCOMMERCE_CONSUMER_KEY",
+            "VITE_WOOCOMMERCE_CONSUMER_SECRET",
+            "VITE_ITEMS_PER_PAGE"
+          ]
+        },
+        {
+          "step": 5,
+          "description_ar": "حدّث domain Vercel في cors-headers.php على الخادم",
+          "description_en": "Update Vercel domain in cors-headers.php on server",
+          "example": "https://your-app.vercel.app"
+        }
+      ]
+    }
+  },
+
+  "testing": {
+    "health_check": {
+      "description_ar": "استخدم Settings > Test Connection للتحقق من الاتصال",
+      "description_en": "Use Settings > Test Connection to verify connection",
+      "endpoint": "/settings"
+    },
+    "endpoints": {
+      "products": "/wp-json/murjan-api/v1/products",
+      "stats": "/wp-json/murjan-api/v1/products/stats",
+      "physical_products": "/wp-json/murjan-api/v1/physical-products",
+      "variable_products": "/wp-json/murjan-api/v1/variable-products"
+    }
+  },
+
+  "troubleshooting": {
+    "cors_error": {
+      "problem_ar": "خطأ CORS عند الاتصال بالـ API",
+      "problem_en": "CORS error when connecting to API",
+      "solutions": [
+        "تأكد من تفعيل cors-headers.php",
+        "أضف domain الخاص بك في allowed_origins",
+        "تحقق من أن WordPress plugin مفعّل",
+        "امسح cache WordPress و browser"
+      ]
+    },
+    "stats_not_loading": {
+      "problem_ar": "الإحصائيات لا تظهر",
+      "problem_en": "Statistics not loading",
+      "solutions": [
+        "تحقق من API credentials في .env",
+        "افتح Console للتحقق من الأخطاء",
+        "استخدم Test Connection في Settings",
+        "تأكد من وجود منتجات في WooCommerce"
+      ]
+    },
+    "authentication_failed": {
+      "problem_ar": "فشل المصادقة",
+      "problem_en": "Authentication failed",
+      "solutions": [
+        "تحقق من Consumer Key و Secret",
+        "تأكد من أن API Key لديه صلاحيات Read/Write",
+        "راجع URL الأساسي للـ API",
+        "تأكد من عدم وجود مسافات في المفاتيح"
+      ]
+    }
+  },
+
+  "features": {
+    "completed": [
+      "✅ CORS headers configured automatically",
+      "✅ Stats auto-refresh on product changes",
+      "✅ Enhanced error handling with Arabic/English messages",
+      "✅ API health check system",
+      "✅ Error boundary for React errors",
+      "✅ Test Connection feature in Settings",
+      "✅ Comprehensive product management",
+      "✅ Support for physical & variable products",
+      "✅ Real-time statistics"
+    ]
+  },
+
+  "support": {
+    "documentation": [
+      "README.md - English documentation",
+      "README-AR.md - Arabic documentation",
+      "API-DOCUMENTATION.md - API reference"
+    ],
+    "contact": {
+      "website": "https://dev.murjan.sa"
+    }
+  }
+}
+

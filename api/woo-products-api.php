@@ -39,48 +39,16 @@ function woo_products_api_woocommerce_missing_notice() {
     <?php
 }
 
+// Include CORS headers file first (critical for API access)
+if (file_exists(WOO_PRODUCTS_API_DIR . 'cors-headers.php')) {
+    require_once WOO_PRODUCTS_API_DIR . 'cors-headers.php';
+}
+
 // Include required files
 require_once WOO_PRODUCTS_API_DIR . 'includes/class-authentication.php';
 require_once WOO_PRODUCTS_API_DIR . 'includes/class-physical-products-api.php';
 require_once WOO_PRODUCTS_API_DIR . 'includes/class-variable-products-api.php';
 require_once WOO_PRODUCTS_API_DIR . 'includes/class-all-products-api.php';
-
-
-// Add CORS headers for external access
-add_action('init', function() {
-    // Handle preflight requests early
-    if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-        header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS, PATCH');
-        header('Access-Control-Allow-Credentials: true');
-        header('Access-Control-Allow-Headers: Authorization, Content-Type, X-WP-Nonce, X-Requested-With, Accept, Origin');
-        header('Access-Control-Max-Age: 86400');
-        status_header(200);
-        exit();
-    }
-});
-
-add_action('rest_api_init', function() {
-    remove_filter('rest_pre_serve_request', 'rest_send_cors_headers');
-    add_filter('rest_pre_serve_request', function($value) {
-        header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS, PATCH');
-        header('Access-Control-Allow-Credentials: true');
-        header('Access-Control-Allow-Headers: Authorization, Content-Type, X-WP-Nonce, X-Requested-With, Accept, Origin');
-        header('Access-Control-Expose-Headers: X-WP-Total, X-WP-TotalPages');
-        
-        return $value;
-    });
-}, 15);
-
-// Additional CORS header for all requests
-add_action('send_headers', function() {
-    if (!headers_sent()) {
-        header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS, PATCH');
-        header('Access-Control-Allow-Headers: Authorization, Content-Type, X-WP-Nonce, X-Requested-With, Accept, Origin');
-    }
-});
 
 // Initialize the plugin
 add_action('rest_api_init', 'woo_products_api_register_routes');

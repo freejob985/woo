@@ -1,7 +1,19 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { Product, ProductsResponse } from '@/types/product';
 import { wooCommerceAPI } from '@/services/api';
 import { useToast } from '@/hooks/use-toast';
+
+interface FetchProductsParams {
+  page?: number;
+  per_page?: number;
+  type?: 'all' | 'physical' | 'variable';
+  status?: 'publish' | 'draft' | 'any';
+  featured?: boolean;
+  on_sale?: boolean;
+  category?: string;
+  orderby?: 'date' | 'title' | 'price' | 'popularity' | 'rating';
+  order?: 'ASC' | 'DESC';
+}
 
 interface ProductContextType {
   products: Product[];
@@ -13,10 +25,11 @@ interface ProductContextType {
     totalProducts: number;
     perPage: number;
   };
-  fetchProducts: (params?: any) => Promise<void>;
+  fetchProducts: (params?: FetchProductsParams) => Promise<void>;
   searchProducts: (searchTerm: string) => Promise<void>;
   refreshProducts: () => Promise<void>;
   deleteProduct: (id: number, type: 'physical' | 'variable') => Promise<void>;
+  triggerStatsRefresh: () => void;
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
@@ -25,6 +38,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [statsRefreshTrigger, setStatsRefreshTrigger] = useState(0);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -33,7 +47,11 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   });
   const { toast } = useToast();
 
-  const fetchProducts = useCallback(async (params?: any) => {
+  const triggerStatsRefresh = useCallback(() => {
+    setStatsRefreshTrigger(prev => prev + 1);
+  }, []);
+
+  const fetchProducts = useCallback(async (params?: FetchProductsParams) => {
     if (!wooCommerceAPI.isConfigured()) {
       setError('API not configured. Please configure your WooCommerce API credentials.');
       return;
@@ -53,8 +71,10 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
         totalProducts: response.total_products,
         perPage: response.per_page,
       });
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Failed to fetch products';
+    } catch (err) {
+      const errorMessage = err instanceof Error && 'response' in err 
+        ? (err as any).response?.data?.message || err.message 
+        : 'Failed to fetch products';
       setError(errorMessage);
       toast({
         title: 'Error',
@@ -85,8 +105,10 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
         totalProducts: response.total_products,
         perPage: response.per_page,
       });
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Search failed';
+    } catch (err) {
+      const errorMessage = err instanceof Error && 'response' in err 
+        ? (err as any).response?.data?.message || err.message 
+        : 'Search failed';
       setError(errorMessage);
       toast({
         title: 'Error',
@@ -100,7 +122,8 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const refreshProducts = useCallback(async () => {
     await fetchProducts({ page: pagination.currentPage });
-  }, [fetchProducts, pagination.currentPage]);
+    triggerStatsRefresh();
+  }, [fetchProducts, pagination.currentPage, triggerStatsRefresh]);
 
   const deleteProduct = useCallback(async (id: number, type: 'physical' | 'variable') => {
     try {
@@ -110,8 +133,10 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
         description: 'Product deleted successfully',
       });
       await refreshProducts();
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Failed to delete product';
+    } catch (err) {
+      const errorMessage = err instanceof Error && 'response' in err 
+        ? (err as any).response?.data?.message || err.message 
+        : 'Failed to delete product';
       toast({
         title: 'Error',
         description: errorMessage,
@@ -120,6 +145,13 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
       throw err;
     }
   }, [toast, refreshProducts]);
+
+  useEffect(() => {
+    // Dispatch custom event when stats should be refreshed
+    if (statsRefreshTrigger > 0) {
+      window.dispatchEvent(new CustomEvent('refreshStats'));
+    }
+  }, [statsRefreshTrigger]);
 
   return (
     <ProductContext.Provider
@@ -132,6 +164,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
         searchProducts,
         refreshProducts,
         deleteProduct,
+        triggerStatsRefresh,
       }}
     >
       {children}

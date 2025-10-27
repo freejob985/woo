@@ -1,31 +1,86 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import DashboardLayout from '@/components/Layout/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { wooCommerceAPI } from '@/services/api';
-import { Package, TrendingUp, AlertCircle, Loader2 } from 'lucide-react';
+import { Package, TrendingUp, AlertCircle, Loader2, RefreshCw } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+
+interface ProductStats {
+  products_overview?: {
+    total_products?: number;
+    physical_products?: number;
+    variable_products?: number;
+    total_variations?: number;
+  };
+  stock_status?: {
+    in_stock?: number;
+    out_of_stock?: number;
+  };
+  sales_info?: {
+    total_sales?: number;
+    on_sale?: number;
+    featured?: number;
+    average_sales_per_product?: number;
+  };
+}
 
 const Stats = () => {
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<ProductStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const { toast } = useToast();
+
+  const fetchStats = useCallback(async (showRefreshingState = false) => {
+    try {
+      if (showRefreshingState) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
+      
+      const data = await wooCommerceAPI.getStats();
+      console.log('📊 Stats loaded:', data);
+      setStats(data);
+      
+      if (showRefreshingState) {
+        toast({
+          title: 'تم التحديث',
+          description: 'تم تحديث الإحصائيات بنجاح',
+        });
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'فشل تحميل الإحصائيات';
+      console.error('Failed to fetch stats:', error);
+      toast({
+        title: 'خطأ',
+        description: errorMessage,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [toast]);
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const data = await wooCommerceAPI.getStats();
-        setStats(data);
-      } catch (error) {
-        console.error('Failed to fetch stats:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     if (wooCommerceAPI.isConfigured()) {
       fetchStats();
     } else {
       setLoading(false);
     }
-  }, []);
+
+    // Listen for refresh stats event from ProductContext
+    const handleRefreshStats = () => {
+      console.log('📊 Stats refresh triggered by product change');
+      fetchStats(true);
+    };
+
+    window.addEventListener('refreshStats', handleRefreshStats);
+    return () => {
+      window.removeEventListener('refreshStats', handleRefreshStats);
+    };
+  }, [fetchStats]);
 
   if (loading) {
     return (
@@ -53,11 +108,22 @@ const Stats = () => {
   return (
     <DashboardLayout>
       <div className="p-6 space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Statistics</h1>
-          <p className="text-muted-foreground">
-            Overview of your WooCommerce store
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">Statistics</h1>
+            <p className="text-muted-foreground">
+              Overview of your WooCommerce store
+            </p>
+          </div>
+          <Button
+            onClick={() => fetchStats(true)}
+            disabled={refreshing || loading}
+            variant="outline"
+            size="sm"
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+            {refreshing ? 'جاري التحديث...' : 'تحديث'}
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

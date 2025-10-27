@@ -1,6 +1,15 @@
 import axios, { AxiosInstance } from 'axios';
 import { Product, ProductsResponse, CreateProductData, CreateVariableProductData } from '@/types/product';
 
+// Custom Error Types
+interface CustomError extends Error {
+  isCorsError?: boolean;
+  isAuthError?: boolean;
+  isPermissionError?: boolean;
+  isNotFoundError?: boolean;
+  isServerError?: boolean;
+}
+
 class WooCommerceAPI {
   private api: AxiosInstance;
   private baseURL: string;
@@ -44,25 +53,73 @@ class WooCommerceAPI {
         return response;
       },
       (error) => {
+        // Handle network/CORS errors
         if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
           console.error('🚫 CORS Error or Network Issue:', error);
-          throw new Error(
+          const corsError = new Error(
+            '❌ خطأ CORS - لا يمكن الاتصال بالـ API:\n' +
+            '1. تأكد من تفعيل WordPress plugin\n' +
+            '2. تحقق من إعدادات CORS في الخادم\n' +
+            '3. راجع بيانات API في ملف .env\n\n' +
             'CORS Error: Cannot connect to API. Please ensure:\n' +
             '1. WordPress plugin is activated\n' +
-            '2. CORS headers are properly configured\n' +
-            '3. API credentials are correct in .env file'
+            '2. CORS headers are properly configured (check cors-headers.php)\n' +
+            '3. API credentials are correct in .env file\n' +
+            '4. Your domain is added to allowed origins list'
           );
+          (corsError as CustomError).isCorsError = true;
+          throw corsError;
         }
         
+        // Handle authentication errors
         if (error.response?.status === 401) {
-          throw new Error('Authentication failed. Check your Consumer Key and Secret.');
+          const authError = new Error(
+            '🔐 خطأ في المصادقة - Authentication failed.\n' +
+            'تحقق من Consumer Key و Consumer Secret في ملف .env'
+          );
+          (authError as CustomError).isAuthError = true;
+          throw authError;
         }
         
+        // Handle permission errors
         if (error.response?.status === 403) {
-          throw new Error('Permission denied. Ensure your API key has proper permissions.');
+          const permError = new Error(
+            '🚫 غير مصرح - Permission denied.\n' +
+            'تأكد من أن مفاتيح API لديها الصلاحيات الصحيحة'
+          );
+          (permError as CustomError).isPermissionError = true;
+          throw permError;
         }
         
-        console.error('❌ API Error:', error);
+        // Handle 404 errors
+        if (error.response?.status === 404) {
+          const notFoundError = new Error(
+            '❓ لم يتم العثور على المورد - Resource not found.\n' +
+            'تحقق من صحة الـ endpoint و ID المطلوب'
+          );
+          (notFoundError as CustomError).isNotFoundError = true;
+          throw notFoundError;
+        }
+        
+        // Handle server errors
+        if (error.response?.status >= 500) {
+          const serverError = new Error(
+            '⚠️ خطأ في الخادم - Server error.\n' +
+            'يرجى المحاولة مرة أخرى لاحقاً أو التواصل مع الدعم الفني'
+          );
+          (serverError as CustomError).isServerError = true;
+          throw serverError;
+        }
+        
+        // Log all errors for debugging
+        console.error('❌ API Error:', {
+          url: error.config?.url,
+          method: error.config?.method,
+          status: error.response?.status,
+          message: error.message,
+          data: error.response?.data
+        });
+        
         return Promise.reject(error);
       }
     );
@@ -110,25 +167,73 @@ class WooCommerceAPI {
         return response;
       },
       (error) => {
+        // Handle network/CORS errors
         if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
           console.error('🚫 CORS Error or Network Issue:', error);
-          throw new Error(
+          const corsError = new Error(
+            '❌ خطأ CORS - لا يمكن الاتصال بالـ API:\n' +
+            '1. تأكد من تفعيل WordPress plugin\n' +
+            '2. تحقق من إعدادات CORS في الخادم\n' +
+            '3. راجع بيانات API في ملف .env\n\n' +
             'CORS Error: Cannot connect to API. Please ensure:\n' +
             '1. WordPress plugin is activated\n' +
-            '2. CORS headers are properly configured\n' +
-            '3. API credentials are correct in .env file'
+            '2. CORS headers are properly configured (check cors-headers.php)\n' +
+            '3. API credentials are correct in .env file\n' +
+            '4. Your domain is added to allowed origins list'
           );
+          (corsError as CustomError).isCorsError = true;
+          throw corsError;
         }
         
+        // Handle authentication errors
         if (error.response?.status === 401) {
-          throw new Error('Authentication failed. Check your Consumer Key and Secret.');
+          const authError = new Error(
+            '🔐 خطأ في المصادقة - Authentication failed.\n' +
+            'تحقق من Consumer Key و Consumer Secret في ملف .env'
+          );
+          (authError as CustomError).isAuthError = true;
+          throw authError;
         }
         
+        // Handle permission errors
         if (error.response?.status === 403) {
-          throw new Error('Permission denied. Ensure your API key has proper permissions.');
+          const permError = new Error(
+            '🚫 غير مصرح - Permission denied.\n' +
+            'تأكد من أن مفاتيح API لديها الصلاحيات الصحيحة'
+          );
+          (permError as CustomError).isPermissionError = true;
+          throw permError;
         }
         
-        console.error('❌ API Error:', error);
+        // Handle 404 errors
+        if (error.response?.status === 404) {
+          const notFoundError = new Error(
+            '❓ لم يتم العثور على المورد - Resource not found.\n' +
+            'تحقق من صحة الـ endpoint و ID المطلوب'
+          );
+          (notFoundError as CustomError).isNotFoundError = true;
+          throw notFoundError;
+        }
+        
+        // Handle server errors
+        if (error.response?.status >= 500) {
+          const serverError = new Error(
+            '⚠️ خطأ في الخادم - Server error.\n' +
+            'يرجى المحاولة مرة أخرى لاحقاً أو التواصل مع الدعم الفني'
+          );
+          (serverError as CustomError).isServerError = true;
+          throw serverError;
+        }
+        
+        // Log all errors for debugging
+        console.error('❌ API Error:', {
+          url: error.config?.url,
+          method: error.config?.method,
+          status: error.response?.status,
+          message: error.message,
+          data: error.response?.data
+        });
+        
         return Promise.reject(error);
       }
     );
