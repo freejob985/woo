@@ -389,8 +389,22 @@ class WooCommerceAPI {
 
   // Get statistics
   async getStats(): Promise<Record<string, unknown>> {
-    const response = await this.api.get('/products/stats');
-    return response.data.statistics;
+    try {
+      const response = await this.api.get('/products/stats');
+      console.log('📊 Stats API Response:', response.data);
+      
+      // Handle both possible response structures
+      if (response.data.statistics) {
+        return response.data.statistics;
+      } else if (response.data.success && response.data.data) {
+        return response.data.data;
+      } else {
+        return response.data;
+      }
+    } catch (error) {
+      console.error('❌ Stats API Error:', error);
+      throw error;
+    }
   }
 }
 

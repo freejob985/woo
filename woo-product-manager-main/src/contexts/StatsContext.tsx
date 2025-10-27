@@ -40,6 +40,7 @@ export const StatsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setLoading(true);
     try {
       const data = await wooCommerceAPI.getStats();
+      console.log('📊 Stats refreshed:', data);
       setStats(data);
     } catch (error) {
       console.error('Failed to refresh stats:', error);
@@ -47,6 +48,24 @@ export const StatsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setLoading(false);
     }
   }, []);
+
+  // Auto-load stats on mount and listen for refresh events
+  React.useEffect(() => {
+    if (wooCommerceAPI.isConfigured()) {
+      refreshStats();
+    }
+
+    // Listen for refresh stats event
+    const handleRefreshStats = () => {
+      console.log('📊 Stats refresh triggered by event');
+      refreshStats();
+    };
+
+    window.addEventListener('refreshStats', handleRefreshStats);
+    return () => {
+      window.removeEventListener('refreshStats', handleRefreshStats);
+    };
+  }, [refreshStats]);
 
   return (
     <StatsContext.Provider value={{ stats, loading, refreshStats }}>

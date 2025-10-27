@@ -38,20 +38,24 @@ function send_cors_headers() {
     // List of allowed origins (add your domains here)
     $allowed_origins = array(
         'https://woo-silk.vercel.app',
+        'https://dev.murjan.sa',
         'http://localhost:3000',
         'http://localhost:5173',
         'http://localhost:5174',
+        'http://localhost:5175',
+        'http://127.0.0.1:3000',
+        'http://127.0.0.1:5173',
     );
     
     // Get the origin of the request
     $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
     
-    // Check if origin is allowed
-    if (in_array($origin, $allowed_origins)) {
+    // Check if origin is allowed or allow all for development
+    if (in_array($origin, $allowed_origins) || !empty($origin)) {
         header('Access-Control-Allow-Origin: ' . $origin);
         header('Access-Control-Allow-Credentials: true');
     } else {
-        // For development, allow all origins (remove in production)
+        // Allow all origins as fallback
         header('Access-Control-Allow-Origin: *');
     }
     
@@ -65,10 +69,10 @@ function send_cors_headers() {
         if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
             header('Access-Control-Allow-Headers: ' . $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']);
         } else {
-            header('Access-Control-Allow-Headers: Authorization, Content-Type, X-WP-Nonce, X-Requested-With, Accept, Origin');
+            header('Access-Control-Allow-Headers: Authorization, Content-Type, X-WP-Nonce, X-Requested-With, Accept, Origin, X-Api-Key');
         }
         
-        header('Access-Control-Expose-Headers: X-WP-Total, X-WP-TotalPages');
+        header('Access-Control-Expose-Headers: X-WP-Total, X-WP-TotalPages, X-WP-TotalPages');
         
         // Return 200 for preflight
         http_response_code(200);
@@ -86,17 +90,20 @@ add_action('send_headers', 'send_cors_headers', 1);
 add_action('rest_api_init', function() {
     remove_filter('rest_pre_serve_request', 'rest_send_cors_headers');
     add_filter('rest_pre_serve_request', function($value) {
-        if (isset($_SERVER['HTTP_ORIGIN'])) {
-            header('Access-Control-Allow-Origin: *');
+        $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+        
+        if (!empty($origin)) {
+            // Allow the specific origin that made the request
+            header('Access-Control-Allow-Origin: ' . $origin);
             header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS, PATCH');
             header('Access-Control-Allow-Credentials: true');
-            header('Access-Control-Allow-Headers: Authorization, Content-Type, X-WP-Nonce, X-Requested-With, Accept, Origin');
+            header('Access-Control-Allow-Headers: Authorization, Content-Type, X-WP-Nonce, X-Requested-With, Accept, Origin, X-Api-Key');
             header('Access-Control-Expose-Headers: X-WP-Total, X-WP-TotalPages');
         }
         
         if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
             header('Access-Control-Max-Age: 86400');
-            http_response_code(200);
+            status_header(200);
             exit();
         }
         
