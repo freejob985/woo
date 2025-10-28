@@ -25,10 +25,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="h-16 flex items-center px-6 border-b border-sidebar-border">
-            <Package className="h-6 w-6 text-sidebar-primary mr-2" />
-            <span className="text-lg font-semibold text-sidebar-foreground">
-              WooCommerce
-            </span>
+            <img 
+              src="/log-removebg-preview.png" 
+              alt="Logo" 
+              className="h-14 w-auto object-contain"
+            />
           </div>
 
           {/* Navigation */}

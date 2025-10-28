@@ -6,8 +6,14 @@
 **Problem:** CORS blocking API requests from Vercel to WordPress  
 **المشكلة:** CORS تمنع طلبات API من Vercel إلى WordPress
 
+**Special Issue:** Vercel preview deployments have unique URLs causing CORS errors  
+**مشكلة خاصة:** Vercel preview deployments لها روابط فريدة تسبب أخطاء CORS
+
 **Solution:** Apply fixes on both Backend (WordPress) and Frontend (React)  
 **الحل:** تطبيق الإصلاحات على Backend (WordPress) و Frontend (React)
+
+**Latest Update (v1.1.0):** Added support for Vercel preview deployments  
+**آخر تحديث (v1.1.0):** إضافة دعم Vercel preview deployments
 
 ---
 
@@ -16,18 +22,25 @@
 ### Step 1: Backend (WordPress) ⏱️ 5 minutes
 
 - [ ] **1.1** Navigate to `e:\woo\api\`
-- [ ] **1.2** Find file `murjan-cors-fix.php`
+- [ ] **1.2** Find file `murjan-cors-fix.php` (**Updated v1.1.0** - includes Vercel preview support)
 - [ ] **1.3** Upload to: `wp-content/mu-plugins/murjan-cors-fix.php`
   - If `mu-plugins` folder doesn't exist, create it
+  - ⚠️ **Important:** Re-upload even if file exists (updated version)
 - [ ] **1.4** Verify in WordPress Admin:
   - Login to WordPress
   - Look for green notice: "✅ Murjan CORS Fix Active"
-- [ ] **1.5** Test with cURL:
+- [ ] **1.5** Test with Production URL:
   ```bash
   curl -I https://dev.murjan.sa/wp-json/murjan-api/v1/products \
     -H "Origin: https://woo-4pdx.vercel.app"
   ```
   - Should return: `access-control-allow-origin: https://woo-4pdx.vercel.app`
+- [ ] **1.6** Test with Preview URL (New!):
+  ```bash
+  curl -I https://dev.murjan.sa/wp-json/murjan-api/v1/products \
+    -H "Origin: https://woo-4pdx-abc123-xyz.vercel.app"
+  ```
+  - Should return: `access-control-allow-origin: https://woo-4pdx-abc123-xyz.vercel.app`
 
 **Alternative Method (if mu-plugins doesn't work):**
 - [ ] Edit `wp-config.php`
@@ -208,6 +221,9 @@ git push
 ### Detailed Guides:
 - **Backend (AR):** `api/CORS-FIX-INSTALLATION-AR.md`
 - **Backend (EN):** `api/CORS-QUICK-FIX.md`
+- **Vercel Preview Fix (AR):** `api/VERCEL-PREVIEW-FIX-AR.md` ⭐ **New!**
+- **Vercel Preview Fix (EN):** `api/VERCEL-PREVIEW-FIX.md` ⭐ **New!**
+- **Quick Vercel Fix (AR):** `VERCEL-CORS-QUICK-FIX-AR.md` ⭐ **New!**
 - **Frontend (AR):** `woo-product-manager-main/CORS-FRONTEND-SOLUTION-AR.md`
 - **Frontend (EN):** `woo-product-manager-main/CORS-FRONTEND-QUICK-FIX.md`
 - **Complete Guide:** `woo-product-manager-main/README-CORS.md`

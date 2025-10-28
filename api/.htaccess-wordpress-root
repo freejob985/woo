@@ -41,11 +41,26 @@ RewriteRule . /index.php [L]
     # ⏱️ Cache preflight for 24 hours
     Header always set Access-Control-Max-Age "86400"
     
-    # 🌍 Allow specific origins (PRODUCTION MODE - RECOMMENDED)
-    # استخدم هذا الخيار للإنتاج - أكثر أماناً
+    # 🌍 Allow specific origins + Vercel previews (PRODUCTION MODE - RECOMMENDED)
+    # استخدم هذا الخيار للإنتاج - أكثر أماناً مع دعم Vercel previews
+    
+    # Exact matches - Production domains
     SetEnvIf Origin "^https://(woo-silk\.vercel\.app|woo-4pdx\.vercel\.app|dev\.murjan\.sa|murjan\.sa|www\.murjan\.sa)$" AccessControlAllowOrigin=$0
-    SetEnvIf Origin "^http://(localhost:3000|localhost:5173|127\.0\.0\.1:3000|127\.0\.0\.1:5173)$" AccessControlAllowOrigin=$0
+    
+    # Vercel preview deployments pattern
+    SetEnvIf Origin "^https://woo-4pdx-[a-z0-9]+-[a-z0-9-]+\.vercel\.app$" AccessControlAllowOrigin=$0
+    
+    # Any Vercel deployment
+    SetEnvIf Origin "^https://[a-z0-9]+-[a-z0-9-]+\.vercel\.app$" AccessControlAllowOrigin=$0
+    
+    # Localhost for development (any port)
+    SetEnvIf Origin "^http://(localhost:[0-9]+|127\.0\.0\.1:[0-9]+)$" AccessControlAllowOrigin=$0
+    
+    # Apply the matched origin
     Header always set Access-Control-Allow-Origin %{AccessControlAllowOrigin}e env=AccessControlAllowOrigin
+    
+    # Fallback: allow requesting origin if no match
+    Header always set Access-Control-Allow-Origin "%{HTTP_ORIGIN}e" env=!AccessControlAllowOrigin
     
     # OR use this for development (allow all origins - less secure)
     # للتطوير فقط - يسمح لجميع النطاقات

@@ -6,6 +6,9 @@ Complete CORS solution for WooCommerce Products Manager connecting React fronten
 
 حل شامل لمشاكل CORS بين تطبيق React (Vercel) والـ Backend WordPress.
 
+**🆕 Latest Update (v1.1.0):** Added support for Vercel preview deployments - fixes CORS errors on preview URLs  
+**🆕 آخر تحديث (v1.1.0):** إضافة دعم Vercel preview deployments - يحل أخطاء CORS على روابط المعاينة
+
 ---
 
 ## 🎯 Quick Start | البداية السريعة
@@ -13,15 +16,18 @@ Complete CORS solution for WooCommerce Products Manager connecting React fronten
 ### 1️⃣ Backend Fix (WordPress) | حل الباك إند
 ```bash
 📁 Location: e:\woo\api\
-📄 Upload: murjan-cors-fix.php
+📄 Upload: murjan-cors-fix.php (v1.1.0 - includes Vercel preview support)
 📍 To: wp-content/mu-plugins/murjan-cors-fix.php
 ⏱️ Time: 2 minutes
-✅ Result: CORS enabled on WordPress API
+✅ Result: CORS enabled on WordPress API + Vercel preview deployments
 ```
 
 **Read Full Guide:**
 - 🇸🇦 Arabic: `api/CORS-FIX-INSTALLATION-AR.md`
 - 🇬🇧 English: `api/CORS-QUICK-FIX.md`
+- 🆕 **Vercel Preview Fix (AR):** `api/VERCEL-PREVIEW-FIX-AR.md`
+- 🆕 **Vercel Preview Fix (EN):** `api/VERCEL-PREVIEW-FIX.md`
+- ⚡ **Quick Fix (AR):** `../VERCEL-CORS-QUICK-FIX-AR.md`
 
 ---
 
